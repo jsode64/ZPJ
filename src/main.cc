@@ -10,7 +10,7 @@ i32 main() {
 
     while (!window.should_close()) {
         // Update game state.
-        //player.update();
+        player.update(world);
 
         // Draw game.
         world.draw(window, player);

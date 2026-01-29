@@ -9,6 +9,8 @@
 #include "player.h"
 #include "window.h"
 
+class Player;
+
 class World {
 private:
     /** @brief The maximum number of tiles that can be in a world. */

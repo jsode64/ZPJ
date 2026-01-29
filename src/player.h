@@ -4,16 +4,26 @@
 
 #include "def.h"
 #include "window.h"
+#include "world.h"
 
-#define X_SPEED 30.0f
-#define Y_SPEED 50.0f
-#define GRAVITY 5.0f
+class World;
 
 class Player {
 private:
+    /** @brief The player's body. */
     SDL_FRect body;
     
+    /** @brief The player's velocity. */
     SDL_FPoint v;
+
+    /** @brief Is `true` if the player is on the ground, `false` if not. */
+    bool onGround;
+
+    /** @brief Handles user input for movement. */
+    void handle_input();
+
+    /** @brief Handles movement and collision. */
+    void handle_movement(const World& world);
 
 public:
     /** @brief Player width. */
@@ -21,6 +31,12 @@ public:
 
     /** @brief Player height. */
     static constexpr f32 H = 32.0f;
+
+    /** @brief The player's x-speed. */
+    static constexpr f32 X_SPEED = 6.0f;
+
+    /** @brief The player's jump-speed. */
+    static constexpr f32 JUMP_SPEED = 15.0f;
 
     Player();
 
@@ -30,7 +46,7 @@ public:
     SDL_FRect get_body() const;
 
     /** @brief Updates the player (handles movement and collision). */
-    void update();
+    void update(const World& world);
 
     /** @brief Draws the player. */
     void draw(Window& window) const;
