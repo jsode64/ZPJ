@@ -3,8 +3,10 @@
 #include "config.h"
 #include "util.h"
 
-Player::Player() : body(0.0f, 0.0f, W, H), v(0.0f, 0.0f), onGround(false) {
-
+Player::Player() : body{}, v{},
+    batteryCapacity(STARTING_BATTERY_CAPACITY), battery(-1), 
+    onGround(false) {
+        init();
 }
 
 Player::~Player() {
@@ -32,7 +34,7 @@ void Player::handle_input() {
 void Player::handle_movement(const World& world) {
     onGround = false;
 
-    // Check for horizontal collision.
+    // Check for horizontal collisions.
     body.x += v.x;
     for (const auto& tile: world.get_tiles()) {
         if (do_rects_collide(tile, body)) {
@@ -45,7 +47,7 @@ void Player::handle_movement(const World& world) {
         }
     }
 
-    // Check for vertical collision.
+    // Check for vertical collisions.
     body.y += v.y;
     for (const auto& tile: world.get_tiles()) {
         if (do_rects_collide(tile, body)) {
@@ -60,13 +62,52 @@ void Player::handle_movement(const World& world) {
     }
 }
 
+void Player::handle_collecting(World& world) {
+    // Check for collected coins.
+    SDL_FRect coinBody(
+        {},
+        {},
+        Coin::W,
+        Coin::H
+    );
+    for (auto& coin: world.get_coins_mut()) {
+        coinBody.x = coin.get_x();
+        coinBody.y = coin.get_y();
+
+        // Collect the coin if it's active and touching.
+        if (coin.is_active() && do_rects_collide(body, coinBody)) {
+            coin.collect();
+            batteryCapacity += 30;
+        }
+    }
+}
+
 SDL_FRect Player::get_body() const {
     return body;
 }
 
-void Player::update(const World& world) {
+bool Player::is_out_of_battery() const {
+    return battery < 0;
+}
+
+void Player::init() {
+    body = {
+        0.0f,
+        0.0f,
+        W,
+        H,
+    };
+    v = { 0.0f, 0.0f };
+    battery = batteryCapacity;
+    onGround = false;
+}
+
+void Player::update(World& world) {
     handle_input();
     handle_movement(world);
+    handle_collecting(world);
+
+    battery--;
 }
 
 void Player::draw(Window& window) const {

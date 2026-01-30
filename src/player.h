@@ -10,11 +10,20 @@ class World;
 
 class Player {
 private:
+    /** @brief The starting battery capacity before upgrades in ticks. */
+    static constexpr i32 STARTING_BATTERY_CAPACITY = 60;
+
     /** @brief The player's body. */
     SDL_FRect body;
     
     /** @brief The player's velocity. */
     SDL_FPoint v;
+
+    /** @brief The player's battery capacity. */
+    i32 batteryCapacity;
+
+    /** @brief The battery the player has left. */
+    i32 battery;
 
     /** @brief Is `true` if the player is on the ground, `false` if not. */
     bool onGround;
@@ -24,6 +33,9 @@ private:
 
     /** @brief Handles movement and collision. */
     void handle_movement(const World& world);
+
+    /** @brief Handles player collecting coins/upgrades. */
+    void handle_collecting(World& world);
 
 public:
     /** @brief Player width. */
@@ -45,8 +57,14 @@ public:
     /** @brief Returns the player's body. */
     SDL_FRect get_body() const;
 
+    /** @brief Returns `true` if the player is out of battery, `false` if not. */
+    bool is_out_of_battery() const;
+
+    /** @brief Initializes the player. */
+    void init();
+
     /** @brief Updates the player (handles movement and collision). */
-    void update(const World& world);
+    void update(World& world);
 
     /** @brief Draws the player. */
     void draw(Window& window) const;

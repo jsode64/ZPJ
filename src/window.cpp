@@ -46,5 +46,5 @@ void Window::update() {
     SDL_RenderClear(renderer);
 
     // Update info.
-    SDL_GetCurrentRenderOutputSize(renderer, &w, &h);
+    SDL_GetWindowSizeInPixels(window, &w, &h);
 }

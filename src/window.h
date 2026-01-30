@@ -6,14 +6,19 @@
 
 class Window {
 private:
+    /** @brief The window's SDL window handle. */
     SDL_Window* window;
 
+    /** @brief The window's SDL renderer handle. */
     SDL_Renderer* renderer;
 
+    /** @brief The window's width in pixels. */
     i32 w;
 
+    /** @brief The window's height in pixels. */
     i32 h;
 
+    /** @brief Is 'true` if the window should close (was closed, hit an error), `false` if not. */
     bool shouldClose;
 
 public:
@@ -30,7 +35,7 @@ public:
     /** @brief Returns the window's height. */
     i32 get_height() const;
 
-    /** @brief Returns `true` if the window should close, `false` if not. */
+    /** @brief Returns `true` if the window should close (was closed, hit an error), `false` if not. */
     bool should_close() const;
 
     /** @brief Updates the window state and presents the latest render. */
