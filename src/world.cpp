@@ -23,6 +23,9 @@ std::span<Coin> World::get_coins_mut() {
 }
 
 void World::init() {
+    numTiles = 0;
+    numCoins = 0;
+
     push_tile({ -100.0f, 100.0f, 200.0f, 50.0f });
     push_tile({ -150.0f, 50.0f, 75.0f, 50.0f });
     push_tile({ -75.0f, -75.0f, 50.0f, 50.0f });
@@ -32,15 +35,15 @@ void World::init() {
 }
 
 void World::draw(Window& window, const Player& player) const {
-    const SDL_FRect body = player.get_body();
+    const auto renderer = window.get_renderer();
+    const SDL_FRect playerBody = player.get_body();
     const f32 winW = f32(window.get_width());
     const f32 winH = f32(window.get_height());
-    auto renderer = window.get_renderer();
 
     // Calculate the camera's view.
     const SDL_FPoint playerCenter(
-        body.x + (body.w / 2.0f),
-        body.y + (body.h / 2.0f)
+        playerBody.x + (playerBody.w / 2.0f),
+        playerBody.y + (playerBody.h / 2.0f)
     );
     const SDL_FRect view(
         playerCenter.x - (winW / 2.0f),

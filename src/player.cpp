@@ -4,7 +4,8 @@
 #include "util.h"
 
 Player::Player() : body{}, v{},
-    batteryCapacity(STARTING_BATTERY_CAPACITY), battery(-1), 
+    numCoins(0),
+    batteryCapacity(STARTING_BATTERY_CAPACITY), batteryRemaining(-1), 
     onGround(false) {
         init();
 }
@@ -87,7 +88,7 @@ SDL_FRect Player::get_body() const {
 }
 
 bool Player::is_out_of_battery() const {
-    return battery < 0;
+    return batteryRemaining < 0;
 }
 
 void Player::init() {
@@ -98,7 +99,7 @@ void Player::init() {
         H,
     };
     v = { 0.0f, 0.0f };
-    battery = batteryCapacity;
+    batteryRemaining = batteryCapacity;
     onGround = false;
 }
 
@@ -107,18 +108,40 @@ void Player::update(World& world) {
     handle_movement(world);
     handle_collecting(world);
 
-    battery--;
+    batteryRemaining--;
 }
 
 void Player::draw(Window& window) const {
-    auto renderer = window.get_renderer();
-    const SDL_FRect dst(
+    const auto renderer = window.get_renderer();
+    const f32 winW = f32(window.get_width());
+    const f32 winH = f32(window.get_height());
+
+    // Draw the player body.
+    const SDL_FRect bodyDst(
         (f32(window.get_width()) - body.w) / 2.0f,
         (f32(window.get_height()) - body.h) / 2.0f,
         body.w,
         body.h
     );
-
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderFillRect(renderer, &dst);
+    SDL_RenderFillRect(renderer, &bodyDst);
+
+    // Draw the battery meter.
+    const f32 percentBattery = f32(batteryRemaining) / f32(batteryCapacity);
+    const SDL_FRect meterLeftDst(
+        0.0f,
+        0.0f,
+        winW * percentBattery,
+        20.0f
+    );
+    const SDL_FRect meterRightDst(
+        meterLeftDst.w,
+        0.0f,
+        winW * (1.0f - percentBattery),
+        20.0f
+    );
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderFillRect(renderer, &meterLeftDst);
+    SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+    SDL_RenderFillRect(renderer, &meterRightDst);
 }

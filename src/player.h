@@ -19,11 +19,14 @@ private:
     /** @brief The player's velocity. */
     SDL_FPoint v;
 
+    /** @brief The coins the player has to spend. */
+    u32 numCoins;
+
     /** @brief The player's battery capacity. */
     i32 batteryCapacity;
 
-    /** @brief The battery the player has left. */
-    i32 battery;
+    /** @brief The battery the player has remaining. */
+    i32 batteryRemaining;
 
     /** @brief Is `true` if the player is on the ground, `false` if not. */
     bool onGround;
