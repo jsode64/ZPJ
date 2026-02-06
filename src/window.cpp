@@ -1,6 +1,11 @@
 #include "window.h"
 
 Window::Window(const char* title, const char* fontPath, i32 w, i32 h) : window(nullptr), renderer(nullptr), font(nullptr), w(0), h(0), shouldClose(true) {
+    // Initialize audio
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)) {
+        return;
+    }
+
     // Initialize the font and render engines.
     if (!TTF_Init() || !SDL_CreateWindowAndRenderer(title, w, h, 0, &window, &renderer)) {
         return;
