@@ -1,7 +1,11 @@
 #include "game.h"
 
+#include "audio.h"
+
 Game::Game(Window& window) : menuText{}, player(), world(), state(State::Level) {
     menuText = window.create_text("PRESS ENTER TO CONTINUE");
+    // load audio assets
+    g_audio.load_assets();
 }
 
 Game::~Game() {

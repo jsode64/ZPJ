@@ -1,5 +1,6 @@
 #include "player.h"
 
+#include "audio.h"
 #include "config.h"
 #include "util.h"
 
@@ -79,6 +80,8 @@ void Player::handle_collecting(World& world) {
         if (coin.is_active() && do_rects_collide(body, coinBody)) {
             coin.collect();
             batteryCapacity += 30;
+            // plays coin sound
+            g_audio.play_coin_sound();
         }
     }
 }
