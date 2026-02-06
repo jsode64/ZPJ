@@ -26,7 +26,7 @@ void World::init() {
     numTiles = 0;
     numCoins = 0;
 
-    push_tile({ -100.0f, 100.0f, 200.0f, 50.0f });
+    push_tile({ -100.0f, 100.0f, 500.0f, 50.0f });
     push_tile({ -150.0f, 50.0f, 75.0f, 50.0f });
     push_tile({ -75.0f, -75.0f, 50.0f, 50.0f });
 

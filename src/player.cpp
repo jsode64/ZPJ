@@ -1,12 +1,17 @@
 #include "player.h"
 
+#include <algorithm>
+
 #include "config.h"
 #include "util.h"
 
-Player::Player() : body{}, v{},
+Player::Player() : jumpKeyState(JUMP_KEY), dashKeyState(DASH_KEY),
+    body{}, v{},
+    batteryCapacity(STARTING_BATTERY_CAPACITY), batteryRemaining(-1),
+    dashCooldown(0),
     numCoins(0),
-    batteryCapacity(STARTING_BATTERY_CAPACITY), batteryRemaining(-1), 
-    onGround(false) {
+    onGround(false), hasDoubleJump(false),
+    isDoubleJumpUnlocked(true), isDashUnlocked(true) {
         init();
 }
 
@@ -16,20 +21,26 @@ Player::~Player() {
 
 void Player::handle_input() {
     const auto keys = SDL_GetKeyboardState(nullptr);
+    jumpKeyState.update();
+    dashKeyState.update();
 
-    if (keys[SDL_SCANCODE_A]) {
-        v.x = -X_SPEED;
-    } else if (keys[SDL_SCANCODE_D]) {
-        v.x = X_SPEED;
+    // Horizontal movement.
+    const bool isDashing = dashKeyState.was_just_pressed() && isDashUnlocked && (dashCooldown < 0);
+    const f32 xSpeed = isDashing ? DASH_SPEED : X_SPEED;
+    if (keys[LEFT_KEY]) {
+        v.x = std::min(v.x, -xSpeed);
+    } else if (keys[RIGHT_KEY]) {
+        v.x = std::max(v.x, xSpeed);
     } else {
         v.x = 0.0f;
     }
 
-    if (onGround && keys[SDL_SCANCODE_SPACE]) {
+    // Vertical movement.
+    if (jumpKeyState.was_just_pressed() && (onGround || hasDoubleJump)) {
         v.y = -JUMP_SPEED;
-    } else {
-        v.y += GRAVITY;
+        hasDoubleJump = onGround;
     }
+    v.y += GRAVITY;
 }
 
 void Player::handle_movement(const World& world) {
@@ -55,6 +66,7 @@ void Player::handle_movement(const World& world) {
             if (v.y >= 0.0f) { // Colliding from the top.
                 body.y = tile.y - body.h;
                 onGround = true;
+                hasDoubleJump = isDoubleJumpUnlocked;
             } else { // Colliding from the bottom.
                 body.y = tile.y + tile.h;
             }
@@ -109,6 +121,7 @@ void Player::update(World& world) {
     handle_collecting(world);
 
     batteryRemaining--;
+    dashCooldown--;
 }
 
 void Player::draw(Window& window) const {
