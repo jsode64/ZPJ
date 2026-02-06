@@ -1,15 +1,21 @@
+#include "assets.h"
+#include "audio.h"
 #include "def.h"
 #include "game.h"
 #include "window.h"
 
 i32 main() {
-    Window window("ZPJ", "assets/comic_sans.ttf", 800, 450);
-    Game game(window);
+    // Load media stream.
+    gAudio.init();
+    gWindow.init();
+    gAssets.load_assets();
 
-    while (!window.should_close()) {
+    Game game;
+
+    while (!gWindow.should_close()) {
         game.update();
-        game.draw(window);
+        game.draw();
 
-        window.update();
+        gWindow.update();
     }
 }

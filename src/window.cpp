@@ -1,24 +1,12 @@
 #include "window.h"
 
-Window::Window(const char* title, const char* fontPath, i32 w, i32 h) : window(nullptr), renderer(nullptr), font(nullptr), w(0), h(0), shouldClose(true) {
-    // Initialize audio
-    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)) {
-        return;
-    }
+#include <exception>
+#include <format>
 
-    // Initialize the font and render engines.
-    if (!TTF_Init() || !SDL_CreateWindowAndRenderer(title, w, h, 0, &window, &renderer)) {
-        return;
-    }
+Window gWindow;
 
-    // Load font.
-    font = TTF_OpenFont(fontPath, 16);
+Window::Window() : window{nullptr}, renderer{nullptr}, font{nullptr}, w{0}, h{0}, shouldClose{true} {
 
-    shouldClose = false;
-    update();
-
-    // Settings.
-    SDL_SetRenderVSync(renderer, 1);
 }
 
 Window::~Window() {
@@ -82,4 +70,23 @@ void Window::update() {
 
     // Update info.
     SDL_GetWindowSizeInPixels(window, &w, &h);
+}
+
+void Window::init() {
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        const auto e = std::format("Failed to intiialize SDL video: \"{}\"", SDL_GetError());
+        throw std::runtime_error(e);
+    }
+
+    // Initialize the font and render engines.
+    if (!SDL_CreateWindowAndRenderer(TITLE, INIT_W, INIT_H, 0, &window, &renderer)) {
+        const auto e = std::format("Failed to create SDL window/renderer: \"{}\"", SDL_GetError());
+        throw std::runtime_error(e);
+    }
+
+    shouldClose = false;
+    update();
+
+    // Settings.
+    SDL_SetRenderVSync(renderer, 1);
 }

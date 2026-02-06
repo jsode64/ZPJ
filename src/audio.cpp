@@ -1,10 +1,12 @@
 #include "audio.h"
 
+#include <exception>
+#include <format>
 #include <SDL3/SDL.h>
 
-Audio g_audio;
+Audio gAudio;
 
-Audio::Audio() : stream(nullptr), coinSoundData(nullptr), coinSoundLength(0), coinSpec{} {
+Audio::Audio() : stream{nullptr} {
 
 }
 
@@ -12,37 +14,37 @@ Audio::~Audio() {
     if (stream) {
         SDL_DestroyAudioStream(stream);
     }
-    if (coinSoundData) {
-        SDL_free(coinSoundData);
-    }
 }
 
-void Audio::load_assets() {
-    // load coin sound
-    if (!SDL_LoadWAV("assets/coin.wav", &coinSpec, &coinSoundData, &coinSoundLength)) {
-        SDL_Log("Failed to load coin.wav: %s", SDL_GetError());
-        return;
-    }
+void Audio::play_sound(const Sound& sound) {
+    SDL_ClearAudioStream(stream);
+    SDL_PutAudioStreamData(stream, sound.get_data(), sound.get_length());
+}
 
-    // audio stream
+void Audio::init() {
+    if (!SDL_Init(SDL_INIT_AUDIO)) {
+        const auto e = std::format("Failed to initialize SDL audio: \"{}\"", SDL_GetError());
+        throw std::runtime_error(e);
+    }
+    
+    // Gotten from `assets/coin.wav`.
+    const SDL_AudioSpec spec = {
+        .channels = 2,
+        .format = SDL_AUDIO_S16,
+        .freq = 44'100,
+    };
+
     stream = SDL_OpenAudioDeviceStream(
         SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK,
-        &coinSpec,
+        &spec,
         nullptr,
         nullptr
     );
 
     if (!stream) {
-        SDL_Log("Failed to create audio stream: %s", SDL_GetError());
-        return;
+        const auto e = std::format("Failed to load SDL audio stream: \"{}\"", SDL_GetError());
+        throw std::runtime_error(e);
     }
-    SDL_ResumeAudioStreamDevice(stream);
-}
 
-void Audio::play_coin_sound() {
-    if (stream && coinSoundData) {
-        // clear pending audio, queue coin sound
-        SDL_ClearAudioStream(stream);
-        SDL_PutAudioStreamData(stream, coinSoundData, coinSoundLength);
-    }
+    SDL_ResumeAudioStreamDevice(stream);
 }

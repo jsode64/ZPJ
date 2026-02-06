@@ -2,10 +2,8 @@
 
 #include "audio.h"
 
-Game::Game(Window& window) : menuText{}, player(), world(), state(State::Level) {
-    menuText = window.create_text("PRESS ENTER TO CONTINUE");
-    // load audio assets
-    g_audio.load_assets();
+Game::Game() : menuText{}, player(), world(), state(State::Level) {
+
 }
 
 Game::~Game() {
@@ -34,17 +32,17 @@ void Game::update() {
     }
 }
 
-void Game::draw(Window& window) const {
+void Game::draw() const {
     if (state == State::Level) {
-        world.draw(window, player);
-        player.draw(window);
+        world.draw(player);
+        player.draw();
     } else if (state == State::Shop) {
         const SDL_FRect dst(
             0.0f,
             0.0f,
-            f32(window.get_width()),
+            f32(gWindow.get_width()),
             50.0f
         );
-        SDL_RenderTexture(window.get_renderer(), menuText, nullptr, &dst);
+        SDL_RenderTexture(gWindow.get_renderer(), menuText, nullptr, &dst);
     }
 }

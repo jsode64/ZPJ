@@ -34,11 +34,11 @@ void World::init() {
     push_coin({ 100.0f, 50.0f });
 }
 
-void World::draw(Window& window, const Player& player) const {
-    const auto renderer = window.get_renderer();
+void World::draw(const Player& player) const {
+    const auto renderer = gWindow.get_renderer();
     const SDL_FRect playerBody = player.get_body();
-    const f32 winW = f32(window.get_width());
-    const f32 winH = f32(window.get_height());
+    const f32 winW = f32(gWindow.get_width());
+    const f32 winH = f32(gWindow.get_height());
 
     // Calculate the camera's view.
     const SDL_FPoint playerCenter(

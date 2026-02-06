@@ -29,7 +29,7 @@ private:
     void init_level();
 
 public:
-    Game(Window& window);
+    Game();
 
     ~Game();
 
@@ -37,5 +37,5 @@ public:
     void update();
 
     /** @brief Draws the game. */
-    void draw(Window& window) const;
+    void draw() const;
 };

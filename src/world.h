@@ -63,5 +63,5 @@ public:
     void init();
 
     /** @brief Draws the stage from the given player's PoV. */
-    void draw(Window& window, const Player& player) const;
+    void draw(const Player& player) const;
 };

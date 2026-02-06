@@ -104,5 +104,5 @@ public:
     void update(World& world);
 
     /** @brief Draws the player. */
-    void draw(Window& window) const;
+    void draw() const;
 };

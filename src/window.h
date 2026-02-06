@@ -10,6 +10,15 @@
 
 class Window {
 private:
+    /** @brief The window's title. */
+    static constexpr const char* TITLE = "ZPJ";
+
+    /** @brief The window's initial width. */
+    static constexpr i32 INIT_W = 800;
+
+    /** @brief The window's initial height. */
+    static constexpr i32 INIT_H = 450;
+
     /** @brief The window's SDL window handle. */
     SDL_Window* window;
 
@@ -29,7 +38,7 @@ private:
     bool shouldClose;
 
 public:
-    Window(const char* title, const char* fontPath, i32 w, i32 h);
+    Window();
 
     ~Window();
 
@@ -53,4 +62,9 @@ public:
 
     /** @brief Updates the window state and presents the latest render. */
     void update();
+
+    /** @brief Initializes the window. */
+    void init();
 };
+
+extern Window gWindow;

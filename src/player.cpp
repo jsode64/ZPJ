@@ -2,6 +2,7 @@
 
 #include <algorithm>
 
+#include "assets.h"
 #include "audio.h"
 #include "config.h"
 #include "util.h"
@@ -92,8 +93,7 @@ void Player::handle_collecting(World& world) {
         if (coin.is_active() && do_rects_collide(body, coinBody)) {
             coin.collect();
             batteryCapacity += 30;
-            // plays coin sound
-            g_audio.play_coin_sound();
+            gAudio.play_sound(gAssets.coinCollectSound);
         }
     }
 }
@@ -127,15 +127,15 @@ void Player::update(World& world) {
     dashCooldown--;
 }
 
-void Player::draw(Window& window) const {
-    const auto renderer = window.get_renderer();
-    const f32 winW = f32(window.get_width());
-    const f32 winH = f32(window.get_height());
+void Player::draw() const {
+    const auto renderer = gWindow.get_renderer();
+    const f32 winW = f32(gWindow.get_width());
+    const f32 winH = f32(gWindow.get_height());
 
     // Draw the player body.
     const SDL_FRect bodyDst(
-        (f32(window.get_width()) - body.w) / 2.0f,
-        (f32(window.get_height()) - body.h) / 2.0f,
+        (f32(gWindow.get_width()) - body.w) / 2.0f,
+        (f32(gWindow.get_height()) - body.h) / 2.0f,
         body.w,
         body.h
     );
