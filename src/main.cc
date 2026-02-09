@@ -1,3 +1,5 @@
+#include <exception>
+
 #include "assets.h"
 #include "audio.h"
 #include "def.h"

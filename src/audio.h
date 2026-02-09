@@ -4,7 +4,6 @@
 
 #include "def.h"
 #include "sound.h"
-
 class Audio {
 private:
     /** @brief The audio stream for playback. */

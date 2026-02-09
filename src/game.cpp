@@ -1,13 +1,9 @@
 #include "game.h"
 
-#include "audio.h"
+#include "assets.h"
 
-Game::Game() : menuText{}, player(), world(), state(State::Level) {
+Game::Game() : player(), world(), state(State::Level) {
 
-}
-
-Game::~Game() {
-    SDL_DestroyTexture(menuText);
 }
 
 void Game::init_level() {
@@ -43,6 +39,6 @@ void Game::draw() const {
             f32(gWindow.get_width()),
             50.0f
         );
-        SDL_RenderTexture(gWindow.get_renderer(), menuText, nullptr, &dst);
+        SDL_RenderTexture(gWindow.get_renderer(), gAssets.menuText.get(), nullptr, &dst);
     }
 }

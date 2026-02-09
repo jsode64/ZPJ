@@ -3,6 +3,7 @@
 #include <SDL3_ttf/SDL_ttf.h>
 
 #include "player.h"
+#include "texture.h"
 #include "window.h"
 #include "world.h"
 
@@ -12,9 +13,6 @@ private:
         Level,
         Shop,
     };
-
-    /** @brief The menu text. */
-    SDL_Texture* menuText;
 
     /** @brief The player. */
     Player player;
@@ -30,8 +28,6 @@ private:
 
 public:
     Game();
-
-    ~Game();
 
     /** @brief Updates the game. */
     void update();
