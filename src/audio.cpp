@@ -29,8 +29,8 @@ void Audio::init() {
     
     // Gotten from `assets/coin.wav`.
     const SDL_AudioSpec spec = {
-        .channels = 2,
         .format = SDL_AUDIO_S16,
+        .channels = 2,
         .freq = 44'100,
     };
 
