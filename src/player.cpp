@@ -1,8 +1,7 @@
 #include "player.h"
-
-#include "audio.h"
 #include "config.h"
 #include "util.h"
+#include "audio_mixer.h"
 
 Player::Player() : body{}, v{},
     numCoins(0),
@@ -28,6 +27,7 @@ void Player::handle_input() {
 
     if (onGround && keys[SDL_SCANCODE_SPACE]) {
         v.y = -JUMP_SPEED;
+        g_audio_mixer.play_jump_sound(); // play jump sound
     } else {
         v.y += GRAVITY;
     }
@@ -80,8 +80,7 @@ void Player::handle_collecting(World& world) {
         if (coin.is_active() && do_rects_collide(body, coinBody)) {
             coin.collect();
             batteryCapacity += 30;
-            // plays coin sound
-            g_audio.play_coin_sound();
+            g_audio_mixer.play_coin_sound(); //play coin sound
         }
     }
 }
