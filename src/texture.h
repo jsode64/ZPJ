@@ -10,7 +10,11 @@ private:
     SDL_Texture* data;
 
 public:
-    Texture();
+    constexpr Texture() : data{nullptr} {
+
+    }
+
+    Texture(const char* path);
 
     ~Texture();
 

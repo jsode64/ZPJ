@@ -1,15 +1,15 @@
 #include <exception>
 
 #include "assets.h"
-#include "audio.h"
 #include "def.h"
 #include "game.h"
 #include "window.h"
+#include "mixer.h"
 
 i32 main() {
     // Load media stream.
-    gAudio.init();
     gWindow.init();
+    gMixer.init();
     gAssets.load_assets();
 
     Game game;

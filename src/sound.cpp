@@ -1,35 +1,41 @@
 #include "sound.h"
 
+#include "mixer.h"
+
 #include <exception>
 #include <format>
 
 Sound::Sound(const char* path) : Sound{} {
-    SDL_LoadWAV(path, &spec, &data, &length);
+    load(path);
 }
 
 Sound::~Sound() {
-    SDL_free(data);
+    MIX_DestroyAudio(audio);
+    MIX_DestroyTrack(track);
 }
 
-const u8* Sound::get_data() const {
-    return data;
+std::tuple<MIX_Audio*, MIX_Track*> Sound::get_data() {
+    return std::tuple(audio, track);
 }
 
-SDL_AudioSpec Sound::get_spec() const {
-    return spec;
-}
+void Sound::load(const char* path) {
+    // Prevent overwrites.
+    MIX_DestroyAudio(audio);
+    MIX_DestroyTrack(track);
 
-u32 Sound::get_length() const {
-    return length;
-}
+    const auto mixer = gMixer.get_mixer();
 
-void Sound::load_wav(const char* path) {
-    if (data) {
-        SDL_free(data);
-    }
-
-    if (!SDL_LoadWAV(path, &spec, &data, &length)) {
-        const auto e = std::format("Failed to load `.wav` file: \"{}\"", SDL_GetError());
+    // Load the sound.
+    if (!(audio = MIX_LoadAudio(mixer, path, true))) {
+        const auto e = std::format("Failed to load audio file `{}`: \"{}\"", path, SDL_GetError());
         throw std::runtime_error(e);
     }
+
+    // Create the track.
+    if (!(track = MIX_CreateTrack(mixer))) {
+        const auto e = std::format("Failed to create mixer track: \"{}\"", SDL_GetError());
+        throw std::runtime_error(e);
+    }
+
+    MIX_SetTrackAudio(track, audio);
 }

@@ -5,8 +5,8 @@
 
 #include "window.h"
 
-Texture::Texture() : data{nullptr} {
-
+Texture::Texture(const char* path) : Texture{} {
+    load_bmp(path);
 }
 
 Texture::~Texture() {

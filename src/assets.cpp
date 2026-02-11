@@ -5,12 +5,6 @@
 
 Assets gAssets;
 
-Assets::Assets() :
-    font{nullptr},
-    coinCollectSound{},
-    menuText{} {
-
-}
 
 void Assets::load_assets() {
     if (!TTF_Init() || !(font = TTF_OpenFont(FONT_PATH, 16.0f))) {
@@ -18,6 +12,8 @@ void Assets::load_assets() {
         throw std::runtime_error(e);
     }
 
-    coinCollectSound.load_wav("assets/coin.wav");
+    jumpSound.load("assets/jump.mp3");
+    coinCollectSound.load("assets/coin.wav");
+
     menuText.load_text(font, "Press ENTER to continue!");
 }

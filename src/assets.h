@@ -14,13 +14,18 @@ public:
     /** @brief The game's font. */
     TTF_Font* font;
 
+    /** @brief The jump sound. */
+    Sound jumpSound;
+
     /** @brief The coin collect sound. */
     Sound coinCollectSound;
 
     /** @brief The menu text. */
     Texture menuText;
 
-    Assets();
+    constexpr Assets() : font{nullptr}, jumpSound{}, coinCollectSound{}, menuText{} {
+        
+    }
 
     /** @brief Loads the game assets. */
     void load_assets();

@@ -3,9 +3,9 @@
 #include <algorithm>
 
 #include "assets.h"
-#include "audio.h"
 #include "config.h"
 #include "util.h"
+#include "mixer.h"
 
 Player::Player() : jumpKeyState(JUMP_KEY), dashKeyState(DASH_KEY),
     body{}, v{},
@@ -40,6 +40,7 @@ void Player::handle_input() {
     // Vertical movement.
     if (jumpKeyState.was_just_pressed() && (onGround || hasDoubleJump)) {
         v.y = -JUMP_SPEED;
+        gMixer.play_sound(gAssets.jumpSound);
         hasDoubleJump = onGround;
     }
     v.y += GRAVITY;
@@ -93,7 +94,7 @@ void Player::handle_collecting(World& world) {
         if (coin.is_active() && do_rects_collide(body, coinBody)) {
             coin.collect();
             batteryCapacity += 30;
-            gAudio.play_sound(gAssets.coinCollectSound);
+            gMixer.play_sound(gAssets.coinCollectSound);
         }
     }
 }
