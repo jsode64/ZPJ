@@ -3,8 +3,6 @@
 /SDL_image
 /SDL_mixer
 /SDL_ttf
-/optional
-CMakeLists.txt
 /.vs
 /.vscode
 
