@@ -97,6 +97,12 @@ public:
     /** @brief Returns `true` if the player is out of battery, `false` if not. */
     bool is_out_of_battery() const;
 
+    /** @brief Returns the number of coins the player has. */
+    i32 get_coins() const;
+
+    /** @brief Returns the player's current battery percentage. */
+    i32 get_battery() const;
+
     /** @brief Initializes the player. */
     void init();
 

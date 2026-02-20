@@ -106,6 +106,14 @@ bool Player::is_out_of_battery() const {
     return batteryRemaining < 0;
 }
 
+i32 Player::get_coins() const {
+    return static_cast<i32>(numCoins);
+}
+
+i32 Player::get_battery() const {
+    return static_cast<i32>(batteryCapacity);
+}
+
 void Player::init() {
     body = {
         0.0f,

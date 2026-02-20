@@ -6,6 +6,7 @@
 #include "texture.h"
 #include "window.h"
 #include "world.h"
+#include "shop.h"
 
 class Game {
 private:
@@ -19,6 +20,9 @@ private:
 
     /** @brief The world. */
     World world;
+
+    /** @brief The shop menu. */
+    Shop shop;
 
     /** @brief The current game state. */
     State state;
