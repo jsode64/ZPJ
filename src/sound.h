@@ -1,30 +1,28 @@
 #pragma once
 
-#include <tuple>
 #include <SDL3_mixer/SDL_mixer.h>
+#include <tuple>
 
 #include "def.h"
 
 class Sound {
 private:
-    /** @brief The sound data. */
-    MIX_Audio* audio;
+  /** The sound data. */
+  MIX_Audio* audio;
 
-    /** @brief The sound's track. */
-    MIX_Track* track;
+  /** The sound's track. */
+  MIX_Track* track;
 
 public:
-    constexpr Sound() : audio{nullptr}, track{nullptr} {
+  constexpr Sound() : audio{nullptr}, track{nullptr} {}
 
-    }
+  Sound(const char* path);
 
-    Sound(const char* path);
+  ~Sound();
 
-    ~Sound();
+  /** Returns the audio and track. */
+  std::tuple<MIX_Audio*, MIX_Track*> get_data();
 
-    /** @brief Returns the audio and track. */
-    std::tuple<MIX_Audio*, MIX_Track*> get_data();
-
-    /** @brief Loads the given audio file into the sound. */
-    void load(const char* path);
+  /** Loads the given audio file into the sound. */
+  void load(const char* path);
 };

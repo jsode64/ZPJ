@@ -1,9 +1,9 @@
 #pragma once
 
+#include <SDL3/SDL.h>
 #include <array>
 #include <cassert>
 #include <span>
-#include <SDL3/SDL.h>
 
 #include "coin.h"
 #include "def.h"
@@ -14,54 +14,54 @@ class Player;
 
 class World {
 private:
-    /** @brief The maximum number of objects that can be in a world. */
-    static constexpr usize MAX_NUM_OBJS = 1024;
+  /** The maximum number of objects that can be in a world. */
+  static constexpr usize MAX_NUM_OBJS = 1024;
 
-    /** @brief The world's tiles. */
-    std::array<SDL_FRect, MAX_NUM_OBJS> tiles;
+  /** The world's tiles. */
+  std::array<SDL_FRect, MAX_NUM_OBJS> tiles;
 
-    /** @brief The number of tiles in the world. */
-    usize numTiles;
+  /** The number of tiles in the world. */
+  usize numTiles;
 
-    /** @brief The world's coins. */
-    std::array<Coin, MAX_NUM_OBJS> coins;
+  /** The world's coins. */
+  std::array<Coin, MAX_NUM_OBJS> coins;
 
-    /** @brief The number of coins in the world. */
-    usize numCoins;
+  /** The number of coins in the world. */
+  usize numCoins;
 
-    /** @brief Asserts that there's room for the tile and pushes it to the world. */
-    constexpr void push_tile(const SDL_FRect tile) {
-        assert(numTiles < MAX_NUM_OBJS);
+  /** Asserts that there's room for the tile and pushes it to the world. */
+  constexpr void push_tile(const SDL_FRect tile) {
+    assert(numTiles < MAX_NUM_OBJS);
 
-        tiles[numTiles] = tile;
-        numTiles++;
-    }
+    tiles[numTiles] = tile;
+    numTiles++;
+  }
 
-    /** @brief Asserts that there's room for the coin and pushes it to the world. */
-    constexpr void push_coin(const Coin coin) {
-        assert(numTiles < MAX_NUM_OBJS);
+  /** Asserts that there's room for the coin and pushes it to the world. */
+  constexpr void push_coin(const Coin coin) {
+    assert(numTiles < MAX_NUM_OBJS);
 
-        coins[numCoins] = coin;
-        numCoins++;
-    }
+    coins[numCoins] = coin;
+    numCoins++;
+  }
 
 public:
-    World();
+  World();
 
-    ~World();
+  ~World();
 
-    /** @brief Returns a span of the world's tiles. */
-    std::span<const SDL_FRect> get_tiles() const;
+  /** Returns a span of the world's tiles. */
+  std::span<const SDL_FRect> get_tiles() const;
 
-    /** @brief Returns a span of the world's coins. */
-    std::span<const Coin> get_coins() const;
+  /** Returns a span of the world's coins. */
+  std::span<const Coin> get_coins() const;
 
-    /** @brief Returns a span of references to the world's coins. */
-    std::span<Coin> get_coins_mut();
+  /** Returns a span of references to the world's coins. */
+  std::span<Coin> get_coins_mut();
 
-    /** @brief Initializes the world. */
-    void init();
+  /** Initializes the world. */
+  void init();
 
-    /** @brief Draws the stage from the given player's PoV. */
-    void draw(const Player& player) const;
+  /** Draws the stage from the given player's PoV. */
+  void draw(const Player& player) const;
 };

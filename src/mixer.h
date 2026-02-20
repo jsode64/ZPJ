@@ -6,23 +6,23 @@
 
 class Mixer {
 private:
-    /** @brief The mixer device for audio playback. */
-    MIX_Mixer* mixer;
+  /** The mixer device for audio playback. */
+  MIX_Mixer* mixer;
 
 public:
-    Mixer();
-    
-    ~Mixer();
+  Mixer();
 
-    /** @brief Returns the mixer. */
-    MIX_Mixer* get_mixer();
+  ~Mixer();
 
-    /** @brief Plays the given sound. */
-    void play_sound(Sound& sound);
+  /** Returns the mixer. */
+  MIX_Mixer* get_mixer();
 
-    /** @brief Initializes the audio mixer. */
-    void init();
+  /** Plays the given sound. */
+  void play_sound(Sound& sound);
+
+  /** Initializes the audio mixer. */
+  void init();
 };
 
-/** @brief Global audio mixer instance. */
+/** Global audio mixer instance. */
 extern Mixer gMixer;

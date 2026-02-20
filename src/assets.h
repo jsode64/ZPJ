@@ -8,28 +8,26 @@
 
 class Assets {
 public:
-    /** @brief The path to the game's font. */
-    static constexpr const char* FONT_PATH = "assets/comic_sans.ttf";
+  /** The path to the game's font. */
+  static constexpr const char* FONT_PATH = "assets/comic_sans.ttf";
 
-    /** @brief The game's font. */
-    TTF_Font* font;
+  /** The game's font. */
+  TTF_Font* font;
 
-    /** @brief The jump sound. */
-    Sound jumpSound;
+  /** The jump sound. */
+  Sound jumpSound;
 
-    /** @brief The coin collect sound. */
-    Sound coinCollectSound;
+  /** The coin collect sound. */
+  Sound coinCollectSound;
 
-    /** @brief The menu text. */
-    Texture menuText;
+  /** The menu text. */
+  Texture menuText;
 
-    constexpr Assets() : font{nullptr}, jumpSound{}, coinCollectSound{}, menuText{} {
-        
-    }
+  constexpr Assets() : font{nullptr}, jumpSound{}, coinCollectSound{}, menuText{} {}
 
-    /** @brief Loads the game assets. */
-    void load_assets();
+  /** Loads the game assets. */
+  void load_assets();
 };
 
-/** @brief The global asset storage. */
+/** The global asset storage. */
 extern Assets gAssets;

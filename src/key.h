@@ -4,26 +4,24 @@
 
 class Key {
 private:
-    /** @brief The key being tracked. */
-    SDL_Scancode key;
+  /** The key being tracked. */
+  SDL_Scancode key;
 
-    /** @brief Is `true` if the key is down now, `false` if not. */
-    bool isDown;
+  /** Is `true` if the key is down now, `false` if not. */
+  bool isDown;
 
-    /** @brief Is `true` if the key was just pressed, `false` if not. */
-    bool wasJustPressed;
+  /** Is `true` if the key was just pressed, `false` if not. */
+  bool wasJustPressed;
 
 public:
-    constexpr Key(SDL_Scancode key) : key(key), isDown(false), wasJustPressed(false) {
+  constexpr Key(SDL_Scancode key) : key(key), isDown(false), wasJustPressed(false) {}
 
-    }
+  /** Returns `true` if the key is down, `false` if not. */
+  bool is_down() const;
 
-    /** @brief Returns `true` if the key is down, `false` if not. */
-    bool is_down() const;
+  /** Returns `true` if the key was just pressed, `false` if not. */
+  bool was_just_pressed() const;
 
-    /** @brief Returns `true` if the key was just pressed, `false` if not. */
-    bool was_just_pressed() const;
-
-    /** @brief Updates the key state. */
-    void update();
+  /** Updates the key state. */
+  void update();
 };

@@ -10,61 +10,63 @@
 
 class Window {
 private:
-    /** @brief The window's title. */
-    static constexpr const char* TITLE = "ZPJ";
+  /** The window's title. */
+  static constexpr const char* TITLE = "ZPJ";
 
-    /** @brief The window's initial width. */
-    static constexpr i32 INIT_W = 800;
+  /** The window's initial width. */
+  static constexpr i32 INIT_W = 800;
 
-    /** @brief The window's initial height. */
-    static constexpr i32 INIT_H = 450;
+  /** The window's initial height. */
+  static constexpr i32 INIT_H = 450;
 
-    /** @brief The window's SDL window handle. */
-    SDL_Window* window;
+  /** The window's SDL window handle. */
+  SDL_Window* window;
 
-    /** @brief The window's SDL renderer handle. */
-    SDL_Renderer* renderer;
+  /** The window's SDL renderer handle. */
+  SDL_Renderer* renderer;
 
-    /** @brief The window's font. */
-    TTF_Font* font;
+  /** The window's font. */
+  TTF_Font* font;
 
-    /** @brief The window's width in pixels. */
-    i32 w;
+  /** The window's width in pixels. */
+  i32 w;
 
-    /** @brief The window's height in pixels. */
-    i32 h;
+  /** The window's height in pixels. */
+  i32 h;
 
-    /** @brief Is 'true` if the window should close (was closed, hit an error), `false` if not. */
-    bool shouldClose;
+  /** Is 'true` if the window should close (was closed, hit an error), `false`
+   * if not. */
+  bool shouldClose;
 
 public:
-    Window();
+  Window();
 
-    ~Window();
+  ~Window();
 
-    /** @brief Returns the window's SDL renderer handle. */
-    SDL_Renderer* get_renderer();
+  /** Returns the window's SDL renderer handle. */
+  SDL_Renderer* get_renderer();
 
-    /** @brief Returns the window's width. */
-    i32 get_width() const;
+  /** Returns the window's width. */
+  i32 get_width() const;
 
-    /** @brief Returns the window's height. */
-    i32 get_height() const;
+  /** Returns the window's height. */
+  i32 get_height() const;
 
-    /** @brief Creates the given text rendered in a texture. */
-    SDL_Texture* create_text(const std::string& text);
+  /** Creates the given text rendered in a texture. */
+  SDL_Texture* create_text(const std::string& text);
 
-    /** @brief Returns a texture made from the given file path. */
-    SDL_Texture* create_texture(const char* path);
+  /** Returns a texture made from the given file path. */
+  SDL_Texture* create_texture(const char* path);
 
-    /** @brief Returns `true` if the window should close (was closed, hit an error), `false` if not. */
-    bool should_close() const;
+  /** Returns `true` if the window should close (was closed, hit an error),
+   * `false` if not. */
+  bool should_close() const;
 
-    /** @brief Updates the window state and presents the latest render. */
-    void update();
+  /** Updates the window state and presents the latest render. */
+  void update();
 
-    /** @brief Initializes the window. */
-    void init();
+  /** Initializes the window. */
+  void init();
 };
 
 extern Window gWindow;
