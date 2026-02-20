@@ -11,79 +11,91 @@ class World;
 
 class Player {
 private:
-    /** @brief Player width. */
+    /** Player width. */
     static constexpr f32 W = 32.0f;
 
-    /** @brief Player height. */
+    /** Player height. */
     static constexpr f32 H = 32.0f;
 
-    /** @brief The player's x-speed. */
-    static constexpr f32 X_SPEED = 6.0f;
+    /** The player's x-speed. */
+    static constexpr f32 BASE_X_SPEED = 6.0f;
 
-    /** @brief The player's jump speed. */
-    static constexpr f32 JUMP_SPEED = 15.0f;
+    /** The player's jump speed. */
+    static constexpr f32 BASE_JUMP_SPEED = 15.0f;
 
-    /** @brief The player's dash speed. */
+    /** The player's dash speed. */
     static constexpr f32 DASH_SPEED = 30.0f;
 
-    /** @brief The starting battery capacity before upgrades in ticks. */
-    static constexpr i32 STARTING_BATTERY_CAPACITY = 150;
+    /** The base battery cost. */
+    static constexpr i32 BASE_BATTERY_COST = 10;
 
-    /** @brief The left key. */
+    /** The starting battery capacity before upgrades in ticks. */
+    static constexpr i32 STARTING_BATTERY_CAPACITY = BASE_BATTERY_COST * 30;
+
+    /** The left key. */
     static constexpr SDL_Scancode LEFT_KEY = SDL_SCANCODE_A;
 
-    /** @brief The right key. */
+    /** The right key. */
     static constexpr SDL_Scancode RIGHT_KEY = SDL_SCANCODE_D;
 
-    /** @brief The jump key. */
+    /** The jump key. */
     static constexpr SDL_Scancode JUMP_KEY = SDL_SCANCODE_SPACE;
 
-    /** @brief The dash key. */
+    /** The dash key. */
     static constexpr SDL_Scancode DASH_KEY = SDL_SCANCODE_LSHIFT;
 
-    /** @brief The jump key state. */
+    /** The jump key state. */
     Key jumpKeyState;
 
-    /** @brief The dash key state. */
+    /** The dash key state. */
     Key dashKeyState;
 
-    /** @brief The player's body. */
+    /** The player's body. */
     SDL_FRect body;
     
-    /** @brief The player's velocity. */
+    /** The player's velocity. */
     SDL_FPoint v;
 
-    /** @brief The player's battery capacity. */
+    /** X speed. */
+    f32 xSpeed;
+
+    /** Jump speed. */
+    f32 jumpSpeed;
+
+    /** The player's battery capacity. */
     i32 batteryCapacity;
 
-    /** @brief The battery the player has remaining. */
+    /** The amount of battery lost each frame. */
+    i32 batteryCost;
+
+    /** The battery the player has remaining. */
     i32 batteryRemaining;
 
-    /** @brief The ticks left in the dash cooldown. */
+    /** The ticks left in the dash cooldown. */
     i32 dashCooldown;
 
-    /** @brief The coins the player has to spend. */
-    u32 numCoins;
+    /** The coins the player has to spend. */
+    i32 numCoins;
 
-    /** @brief Is `true` if the player is on the ground, `false` if not. */
+    /** Is the player on the ground? */
     bool onGround;
 
-    /** @brief Is `true` if the player has their double jump, `false` if not. */
+    /** Has the player double jumped since last on the ground? */
     bool hasDoubleJump;
 
-    /** @brief Is `true` if the player has the double jump upgrade, `false` if not. */
+    /** Does the player have the double jump unlocked? */
     bool isDoubleJumpUnlocked;
 
-    /** @brief Is `true` if the player has the dash unlocked, `false` if not. */
+    /** Does the player have the dash unlocked? */
     bool isDashUnlocked;
 
-    /** @brief Handles user input for movement. */
+    /** Handles user input for movement. */
     void handle_input();
 
-    /** @brief Handles movement and collision. */
+    /** Handles movement and collision. */
     void handle_movement(const World& world);
 
-    /** @brief Handles player collecting coins/upgrades. */
+    /** Handles player collecting coins/upgrades. */
     void handle_collecting(World& world);
 
 public:
@@ -91,24 +103,39 @@ public:
 
     ~Player();
 
-    /** @brief Returns the player's body. */
+    /** Returns the player's body. */
     SDL_FRect get_body() const;
 
-    /** @brief Returns `true` if the player is out of battery, `false` if not. */
+    /** Is the player out of battery? */
     bool is_out_of_battery() const;
 
-    /** @brief Returns the number of coins the player has. */
+    /** Returns the number of coins the player has. */
     i32 get_coins() const;
 
-    /** @brief Returns the player's current battery percentage. */
+    /** Returns the player's current battery percentage. */
     i32 get_battery() const;
 
-    /** @brief Initializes the player. */
+    /** Increases the player's battery capacity. */
+    void increase_battery_capacity();
+
+    /** Increases the player's battery efficiency. */
+    void increase_battery_efficiency();
+
+    /** Increases the player's speed. */
+    void increase_speed();
+
+    /** Increases the player's jump height. */
+    void increase_jump();
+
+    /** Removes the given number of coins from the player. */
+    void take_coins(i32 cost);
+
+    /** Initializes the player. */
     void init();
 
-    /** @brief Updates the player (handles movement and collision). */
+    /** Updates the player (handles movement and collision). */
     void update(World& world);
 
-    /** @brief Draws the player. */
+    /** Draws the player. */
     void draw() const;
 };

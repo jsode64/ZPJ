@@ -9,7 +9,8 @@
 
 Player::Player() : jumpKeyState(JUMP_KEY), dashKeyState(DASH_KEY),
     body{}, v{},
-    batteryCapacity(STARTING_BATTERY_CAPACITY), batteryRemaining(-1),
+    xSpeed{BASE_X_SPEED}, jumpSpeed{BASE_JUMP_SPEED},
+    batteryCapacity(STARTING_BATTERY_CAPACITY), batteryCost{BASE_BATTERY_COST}, batteryRemaining(-1),
     dashCooldown(0),
     numCoins(0),
     onGround(false), hasDoubleJump(false),
@@ -28,7 +29,7 @@ void Player::handle_input() {
 
     // Horizontal movement.
     const bool isDashing = dashKeyState.was_just_pressed() && isDashUnlocked && (dashCooldown < 0);
-    const f32 xSpeed = isDashing ? DASH_SPEED : X_SPEED;
+    const f32 xSpeed = isDashing ? DASH_SPEED : xSpeed;
     if (keys[LEFT_KEY]) {
         v.x = std::min(v.x, -xSpeed);
     } else if (keys[RIGHT_KEY]) {
@@ -39,7 +40,7 @@ void Player::handle_input() {
 
     // Vertical movement.
     if (jumpKeyState.was_just_pressed() && (onGround || hasDoubleJump)) {
-        v.y = -JUMP_SPEED;
+        v.y = -jumpSpeed;
         gMixer.play_sound(gAssets.jumpSound);
         hasDoubleJump = onGround;
     }
@@ -115,6 +116,26 @@ i32 Player::get_battery() const {
     return static_cast<i32>(batteryCapacity);
 }
 
+void Player::increase_battery_capacity() {
+    batteryCapacity += 30;
+}
+
+void Player::increase_battery_efficiency() {
+    batteryCost -= 2;
+}
+
+void Player::increase_speed() {
+    xSpeed += 0.5f;
+}
+
+void Player::increase_jump() {
+    jumpSpeed += 1.0f;
+}
+
+void Player::take_coins(i32 cost) {
+    numCoins = std::max(numCoins - cost, 0);
+}
+
 void Player::init() {
     body = {
         0.0f,
@@ -132,7 +153,7 @@ void Player::update(World& world) {
     handle_movement(world);
     handle_collecting(world);
 
-    batteryRemaining--;
+    batteryRemaining -= batteryCost;
     dashCooldown--;
 }
 
