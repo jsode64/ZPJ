@@ -65,7 +65,7 @@ void Shop::update(i32 mouse_x, i32 mouse_y, bool mouse_clicked) {
 void Shop::draw(SDL_Renderer* renderer) const {
     // Draw background
     SDL_SetRenderDrawColor(renderer, 30, 30, 60, 255);
-    SDL_FRect bg{0, 0, gWindow.get_width(), gWindow.get_height()};
+    SDL_FRect bg{0, 0, static_cast<f32>(gWindow.get_width()), static_cast<f32>(gWindow.get_height())};
     SDL_RenderFillRect(renderer, &bg);
     
     // Draw title
