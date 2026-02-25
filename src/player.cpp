@@ -95,9 +95,9 @@ SDL_FRect Player::get_body() const { return body; }
 
 bool Player::is_out_of_battery() const { return batteryRemaining < 0; }
 
-i32 Player::get_coins() const { return static_cast<i32>(numCoins); }
+i32 Player::get_coins() const { return numCoins; }
 
-i32 Player::get_battery() const { return static_cast<i32>(batteryCapacity); }
+i32 Player::get_battery() const { return batteryCapacity; }
 
 void Player::increase_battery_capacity() { batteryCapacity += 30; }
 
