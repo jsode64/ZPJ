@@ -3,3 +3,6 @@
 /SDL_image
 /SDL_mixer
 /SDL_ttf
+/.vs
+/.vscode
+CMakeLists.txt.user
