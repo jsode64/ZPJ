@@ -5,8 +5,8 @@
 #include <string>
 #include "assets.h"
 
-Shop::Shop() 
-    : player_coins(0), player_battery(100), last_clicked_button(-1) {
+Shop::Shop(Player& player) 
+    : player(player), click(KEY_DOWN_MOUSE(SDL_BUTTON_LMASK)), last_clicked_button(-1) {
     
     // Create buttons
     buttons.resize(3);
@@ -42,15 +42,15 @@ void Shop::update(i32 mouse_x, i32 mouse_y, bool mouse_clicked) {
             button.hovered = true;
             
             // Handle click
-            if (mouse_clicked) {
+            click.update();
+            if (click.was_just_pressed()) {
                 last_clicked_button = button.id;
                 
                 // Handle button actions
                 switch (static_cast<ButtonID>(button.id)) {
                     case ButtonID::RestoreBattery:
-                        if (player_coins >= 50) {
-                            player_coins -= 50;
-                            player_battery = 100;
+                        if (player.take_coins(2)) {
+                            player.increase_battery_capacity();
                         }
                         break;
                     case ButtonID::Exit:
@@ -89,8 +89,8 @@ void Shop::draw(SDL_Renderer* renderer) const {
     
     // Draw player stats
     if (gAssets.font) {
-        std::string stats = "Coins: " + std::to_string(player_coins) + 
-                           " | Battery: " + std::to_string(player_battery);
+        std::string stats = "Coins: " + std::to_string(player.get_coins()) + 
+                           " | Battery: " + std::to_string(player.get_battery_capacity());
         SDL_Surface* stats_surface = TTF_RenderText_Solid(gAssets.font, stats.c_str(),
                                                          (stats.length() + 1), SDL_Color{200, 200, 200, 255});
         if (stats_surface) {
@@ -113,11 +113,6 @@ void Shop::draw(SDL_Renderer* renderer) const {
     for (const auto& button : buttons) {
         render_button(button, renderer, gAssets.font);
     }
-}
-
-void Shop::set_player_stats(int coins, int battery) {
-    player_coins = coins;
-    player_battery = battery;
 }
 
 int Shop::get_last_action() {
