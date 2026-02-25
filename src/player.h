@@ -106,8 +106,8 @@ public:
   /** Returns the player's body. */
   SDL_FRect get_body() const;
 
-  /** Is the player out of battery? */
-  bool is_out_of_battery() const;
+    /** @brief Returns `true` if the player is out of battery, `false` if not. */
+    bool is_out_of_battery() const;
 
   /** Returns the number of coins the player has. */
   i32 get_coins() const;

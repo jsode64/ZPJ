@@ -3,3 +3,9 @@
 /SDL_image
 /SDL_mixer
 /SDL_ttf
+<<<<<<< HEAD
+=======
+/.vs
+/.vscode
+
+>>>>>>> shop-menu

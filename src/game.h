@@ -7,6 +7,7 @@
 #include "texture.h"
 #include "window.h"
 #include "world.h"
+#include "shop.h"
 
 class Game {
 private:
