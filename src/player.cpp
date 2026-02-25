@@ -1,6 +1,7 @@
 #include "player.h"
 
 #include <algorithm>
+#include <print>
 
 #include "assets.h"
 #include "config.h"
@@ -24,11 +25,11 @@ void Player::handle_input() {
 
   // Horizontal movement.
   const bool isDashing = dashKeyState.was_just_pressed() && isDashUnlocked && (dashCooldown < 0);
-  const f32 xSpeed = isDashing ? DASH_SPEED : xSpeed;
+  const f32 speed = isDashing ? DASH_SPEED : xSpeed;
   if (keys[LEFT_KEY]) {
-    v.x = std::min(v.x, -xSpeed);
+    v.x = std::min(v.x, -speed);
   } else if (keys[RIGHT_KEY]) {
-    v.x = std::max(v.x, xSpeed);
+    v.x = std::max(v.x, speed);
   } else {
     v.x = 0.0f;
   }
@@ -110,8 +111,8 @@ void Player::take_coins(i32 cost) { numCoins = std::max(numCoins - cost, 0); }
 
 void Player::init() {
   body = {
-      0.0f,
-      0.0f,
+      -(W / 2.0f),
+      -(H / 2.0f),
       W,
       H,
   };
