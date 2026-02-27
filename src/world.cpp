@@ -20,12 +20,18 @@ void World::init() {
   numTiles = 0;
   numCoins = 0;
 
-  push_tile({-100.0f, 100.0f, 500.0f, 50.0f});
+  push_tile({-2500.0f, 100.0f, 5000.0f, 50.0f});
+  push_tile({-2500.0f, -1000.0f, 5000.0f, 50.0f});
+  push_tile({-2550.0f, -950.0f, 50.0f, 1100.0f});
+  push_tile({2500.0f, -950.0f, 50.0f, 1100.0f});
   push_tile({-150.0f, 50.0f, 75.0f, 50.0f});
   push_tile({-75.0f, -75.0f, 50.0f, 50.0f});
+  push_tile({-250.0f, 25.0f, 100.0f, 50.0f});
+  push_tile({250.0f, 50.0f, 100.0f, 50.0f});
 
   push_coin({-250.0f, 0.0f});
   push_coin({100.0f, 50.0f});
+  push_coin({200.0f, 50.0f});
 }
 
 void World::draw(const Player& player) const {
