@@ -5,23 +5,25 @@
 #include <string>
 
 class Texture {
-private:
-  /** A handle to the texture. */
-  SDL_Texture* data;
+  private:
+    /** A handle to the texture. */
+    SDL_Texture* data;
 
-public:
-  constexpr Texture() : data{nullptr} {}
+  public:
+    constexpr Texture() : data{nullptr} {}
 
-  Texture(const char* path);
+    constexpr Texture(SDL_Texture* data) : data{data} {}
 
-  ~Texture();
+    Texture(const char* path);
 
-  /** Returns a handle to the texture. */
-  SDL_Texture* get();
+    ~Texture();
 
-  /** Loads the texture from the given `.bmp` file. */
-  void load_bmp(const char* path);
+    /** Returns a handle to the texture. */
+    SDL_Texture* get();
 
-  /** Renders the given text. */
-  void load_text(TTF_Font* font, const std::string& text);
+    /** Loads the texture from the given `.bmp` file. */
+    void load_bmp(const char* path);
+
+    /** Renders the given text. */
+    void load_text(TTF_Font* font, const std::string& text);
 };

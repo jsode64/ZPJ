@@ -5,23 +5,23 @@
 #include "sound.h"
 
 class Mixer {
-private:
-  /** The mixer device for audio playback. */
-  MIX_Mixer* mixer;
+  private:
+    /** The mixer device for audio playback. */
+    MIX_Mixer* mixer;
 
-public:
-  Mixer();
+  public:
+    Mixer();
 
-  ~Mixer();
+    ~Mixer();
 
-  /** Returns the mixer. */
-  MIX_Mixer* get_mixer();
+    /** Returns the mixer. */
+    MIX_Mixer* get_mixer();
 
-  /** Plays the given sound. */
-  void play_sound(Sound& sound);
+    /** Plays the given sound. */
+    void play_sound(Sound& sound);
 
-  /** Initializes the audio mixer. */
-  void init();
+    /** Initializes the audio mixer. */
+    void init();
 };
 
 /** Global audio mixer instance. */

@@ -7,36 +7,35 @@
 #include "texture.h"
 #include "window.h"
 #include "world.h"
-#include "shop.h"
 
 class Game {
-private:
-  enum class State {
-    Level,
-    Shop,
-  };
+  private:
+    enum class State {
+        Level,
+        Shop,
+    };
 
-  /** The player. */
-  Player player;
+    /** The player. */
+    Player player;
 
-  /** The world. */
-  World world;
+    /** The world. */
+    World world;
 
-  /** The shop menu. */
-  Shop shop;
+    /** The shop menu. */
+    Shop shop;
 
-  /** The current game state. */
-  State state;
+    /** The current game state. */
+    State state;
 
-  /** Initializes the level. */
-  void init_level();
+  public:
+    Game();
 
-public:
-  Game();
+    /** Sets the game state to level. */
+    void start_level();
 
-  /** Updates the game. */
-  void update();
+    /** Updates the game. */
+    void update();
 
-  /** Draws the game. */
-  void draw() const;
+    /** Draws the game. */
+    void draw() const;
 };

@@ -1,17 +1,26 @@
 #pragma once
 
-#include <SDL3/SDL.h>
 #include "def.h"
 #include "key.h"
 #include "menu.h"
 #include "player.h"
+#include <SDL3/SDL.h>
 
-class Shop: public Menu {
-private:
-    enum class ButtonID {
-        RestoreBattery = 0,
-        Exit = 1,
-    };
+class Game;
+
+class Shop : public Menu {
+  private:
+    /** The width of each button. */
+    static constexpr f32 BUTTON_W = 150.0f;
+
+    /** The height of each button. */
+    static constexpr f32 BUTTON_H = 50.0f;
+
+    /** The space between each button. */
+    static constexpr f32 BUTTON_SPACING = 30.0f;
+
+    /** The game. */
+    Game& game;
 
     /** The player. */
     Player& player;
@@ -19,21 +28,12 @@ private:
     /** Click. */
     Key click;
 
-    i32 last_clicked_button;
+  public:
+    Shop(Game& game, Player& player);
 
-    static constexpr i32 BUTTON_WIDTH = 150;
-    static constexpr i32 BUTTON_HEIGHT = 50;
-    static constexpr i32 BUTTON_SPACING = 20;
+    /** Update shop state (handle mouse input). */
+    void update(f32 mouse_x, f32 mouse_y, bool mouse_clicked) override;
 
-public:
-    Shop(Player& player);
-
-    /** @brief Update shop state (handle mouse input). */
-    void update(i32 mouse_x, i32 mouse_y, bool mouse_clicked) override;
-
-    /** @brief Draw the shop menu. */
-    void draw(SDL_Renderer* renderer) const override;
-
-    /** @brief Get the last button that was sent (returns -1 if none, then int from ButtonID). */
-    int get_last_action();
+    /** Draw the shop menu. */
+    void draw() const override;
 };

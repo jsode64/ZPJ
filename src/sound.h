@@ -6,23 +6,23 @@
 #include "def.h"
 
 class Sound {
-private:
-  /** The sound data. */
-  MIX_Audio* audio;
+  private:
+    /** The sound data. */
+    MIX_Audio* audio;
 
-  /** The sound's track. */
-  MIX_Track* track;
+    /** The sound's track. */
+    MIX_Track* track;
 
-public:
-  constexpr Sound() : audio{nullptr}, track{nullptr} {}
+  public:
+    constexpr Sound() : audio{nullptr}, track{nullptr} {}
 
-  Sound(const char* path);
+    Sound(const char* path);
 
-  ~Sound();
+    ~Sound();
 
-  /** Returns the audio and track. */
-  std::tuple<MIX_Audio*, MIX_Track*> get_data();
+    /** Returns the audio and track. */
+    std::tuple<MIX_Audio*, MIX_Track*> get_data();
 
-  /** Loads the given audio file into the sound. */
-  void load(const char* path);
+    /** Loads the given audio file into the sound. */
+    void load(const char* path);
 };

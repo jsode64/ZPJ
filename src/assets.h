@@ -7,26 +7,26 @@
 #include "texture.h"
 
 class Assets {
-public:
-  /** The path to the game's font. */
-  static constexpr const char* FONT_PATH = "assets/comic_sans.ttf";
+  public:
+    /** The path to the game's font. */
+    static constexpr const char* FONT_PATH = "assets/comic_sans.ttf";
 
-  /** The game's font. */
-  TTF_Font* font;
+    /** The game's font. */
+    TTF_Font* font;
 
-  /** The jump sound. */
-  Sound jumpSound;
+    /** The jump sound. */
+    Sound jumpSound;
 
-  /** The coin collect sound. */
-  Sound coinCollectSound;
+    /** The coin collect sound. */
+    Sound coinCollectSound;
 
-  /** The menu text. */
-  Texture menuText;
+    /** The menu text. */
+    Texture menuText;
 
-  constexpr Assets() : font{nullptr}, jumpSound{}, coinCollectSound{}, menuText{} {}
+    constexpr Assets() : font{nullptr}, jumpSound{}, coinCollectSound{}, menuText{} {}
 
-  /** Loads the game assets. */
-  void load_assets();
+    /** Loads the game assets. */
+    void load_assets();
 };
 
 /** The global asset storage. */
