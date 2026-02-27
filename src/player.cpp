@@ -9,7 +9,7 @@
 #include "util.h"
 
 Player::Player()
-    : jumpKeyState(JUMP_KEY), dashKeyState(DASH_KEY), body{}, v{}, xSpeed{BASE_X_SPEED},
+    : jumpKeyState(KEY_DOWN_SCANCODE(JUMP_KEY)), dashKeyState(KEY_DOWN_SCANCODE(DASH_KEY)), body{}, v{}, xSpeed{BASE_X_SPEED},
       jumpSpeed{BASE_JUMP_SPEED}, batteryCapacity(STARTING_BATTERY_CAPACITY),
       batteryCost{BASE_BATTERY_COST}, batteryRemaining(-1), dashCooldown(0), numCoins(0),
       onGround(false), hasDoubleJump(false), isDoubleJumpUnlocked(true), isDashUnlocked(true) {
@@ -85,7 +85,7 @@ void Player::handle_collecting(World& world) {
     // Collect the coin if it's active and touching.
     if (coin.is_active() && do_rects_collide(body, coinBody)) {
       coin.collect();
-      batteryCapacity += 30;
+      numCoins += 1;
       gMixer.play_sound(gAssets.coinCollectSound);
     }
   }
@@ -95,19 +95,26 @@ SDL_FRect Player::get_body() const { return body; }
 
 bool Player::is_out_of_battery() const { return batteryRemaining < 0; }
 
+bool Player::take_coins(i32 cost) {
+  if (numCoins >= cost) {
+    numCoins -= cost;
+    return true;
+  } else {
+    return false;
+  }
+}
+
 i32 Player::get_coins() const { return numCoins; }
 
-i32 Player::get_battery() const { return batteryCapacity; }
+i32 Player::get_battery_capacity() const { return batteryCapacity; }
 
-void Player::increase_battery_capacity() { batteryCapacity += 30; }
+void Player::increase_battery_capacity() { batteryCapacity += 100; }
 
 void Player::increase_battery_efficiency() { batteryCost -= 2; }
 
 void Player::increase_speed() { xSpeed += 0.5f; }
 
 void Player::increase_jump() { jumpSpeed += 1.0f; }
-
-void Player::take_coins(i32 cost) { numCoins = std::max(numCoins - cost, 0); }
 
 void Player::init() {
   body = {

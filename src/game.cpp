@@ -2,7 +2,7 @@
 
 #include "assets.h"
 
-Game::Game() : player(), world(), state(State::Level) {}
+Game::Game() : player(), world(), state(State::Level), shop(player) {}
 
 void Game::init_level() {
   world.init();
@@ -16,8 +16,6 @@ void Game::update() {
         // Go to shop if the player is out of battery.
         if (player.is_out_of_battery()) {
             state = State::Shop;
-            // Update shop with current player stats
-            shop.set_player_stats(player.get_coins(), player.get_battery());
         }
     } else if (state == State::Shop) {
         // Get mouse state

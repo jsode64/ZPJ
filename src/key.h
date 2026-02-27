@@ -1,11 +1,17 @@
 #pragma once
 
+#include <functional>
 #include <SDL3/SDL.h>
+
+using KeyDownFn = std::function<bool(void)>;
+
+#define KEY_DOWN_SCANCODE(scancode) [](){ return SDL_GetKeyboardState(nullptr)[(scancode)]; }
+#define KEY_DOWN_MOUSE(mb) [](){ return (SDL_GetGlobalMouseState(nullptr, nullptr) & (mb)) != 0; }
 
 class Key {
 private:
-  /** The key being tracked. */
-  SDL_Scancode key;
+  /** The function to tell if the key is down. */
+  KeyDownFn keyDownFn;
 
   /** Is `true` if the key is down now, `false` if not. */
   bool isDown;
@@ -14,7 +20,7 @@ private:
   bool wasJustPressed;
 
 public:
-  constexpr Key(SDL_Scancode key) : key(key), isDown(false), wasJustPressed(false) {}
+  Key(KeyDownFn keyDownFn);
 
   /** Returns `true` if the key is down, `false` if not. */
   bool is_down() const;

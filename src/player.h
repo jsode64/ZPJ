@@ -106,14 +106,17 @@ public:
   /** Returns the player's body. */
   SDL_FRect get_body() const;
 
-    /** @brief Returns `true` if the player is out of battery, `false` if not. */
-    bool is_out_of_battery() const;
-
   /** Returns the number of coins the player has. */
   i32 get_coins() const;
 
-  /** Returns the player's current battery percentage. */
-  i32 get_battery() const;
+  /** Returns the player's battery capacity. */
+  i32 get_battery_capacity() const;
+
+  /** Removes the given number of coins from the player, returning `true` if they had that many coins, `false` if not. */
+  bool take_coins(i32 cost);
+
+    /** @brief Returns `true` if the player is out of battery, `false` if not. */
+    bool is_out_of_battery() const;
 
   /** Increases the player's battery capacity. */
   void increase_battery_capacity();
@@ -126,9 +129,6 @@ public:
 
   /** Increases the player's jump height. */
   void increase_jump();
-
-  /** Removes the given number of coins from the player. */
-  void take_coins(i32 cost);
 
   /** Initializes the player. */
   void init();
