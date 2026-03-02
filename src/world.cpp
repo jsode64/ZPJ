@@ -41,6 +41,17 @@ void World::init() {
   push_coin({-225.0f, -10.0f});
   push_coin({100.0f, 50.0f});
   push_coin({300.0f, 0.0f});
+
+
+  // A grid of coins for testing
+  /* 
+  for (i32 i = 0; i < 10; i++) {
+    for (i32 j = 0; j < 2; j++) {
+      push_coin({-600.0f + (i * 25.0f), 50.0f + (j * -25.0f)});
+    }
+  }
+  */
+
 }
 
 void World::draw(const Player& player) const {
