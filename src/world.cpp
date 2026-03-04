@@ -21,26 +21,46 @@ void World::init() {
   numCoins = 0;
 
   // Tiles for the edge of the world
-  push_tile({-2500.0f, 100.0f, 5000.0f, 50.0f});
-  push_tile({-2500.0f, -1000.0f, 5000.0f, 50.0f});
-  push_tile({-2550.0f, -1000.0f, 50.0f, 1150.0f});
-  push_tile({2500.0f, -1000.0f, 50.0f, 1150.0f});
+  push_tile({-2000.0f, 100.0f, 4000.0f, 50.0f});
+  push_tile({-2000.0f, -1500.0f, 4000.0f, 50.0f});
+  push_tile({-2050.0f, -1500.0f, 50.0f, 1650.0f});
+  push_tile({2000.0f, -1500.0f, 50.0f, 1650.0f});
 
   // Stage tiles
-  push_tile({-150.0f, 62.5f, 75.0f, 37.5f});
+  //
   push_tile({-50.0f, -75.0f, 150.0f, 50.0f});
   push_tile({100.0f, -175.0f, 50.0f, 150.0f});
-  push_tile({-250.0f, 25.0f, 100.0f, 75.0f});
+
+  // Staircase to the left
+  push_tile({-150.0f, 75.0f, 75.0f, 25.0f});
+  push_tile({-250.0f, 50.0f, 100.0f, 50.0f});
+  push_tile({-550.0f, 25.0f, 300.0f, 75.0f});
+
+  // Staircase to the right
   push_tile({250.0f, 50.0f, 100.0f, 50.0f});
   push_tile({450.0f, 0.0f, 100.0f, 100.0f});
+  push_tile({650.0f, -50.0f, 100.0f, 150.0f});
+  push_tile({750.0f, 0.0f, 50.0f, 100.0f});
+  push_tile({800.0f, 50.0f, 50.0f, 50.0f});
+
   push_tile({300.0f, -200.0f, 50.0f, 50.0f});
   push_tile({500.0f, -225.0f, 50.0f, 50.0f});
+  push_tile({700.0f, -255.0f, 50.0f, 50.0f});
+  push_tile({900.0f, -300.0f, 200.0f, 50.0f});
   push_tile({-300.0f, -175.0f, 150.0f, 50.0f});
   push_tile({-350.0f, -400.0f, 50.0f, 275.0f});
 
-  push_coin({-225.0f, -10.0f});
-  push_coin({100.0f, 50.0f});
-  push_coin({300.0f, 0.0f});
+  // Coins to the right
+  push_coin({100.0f, 65.0f});
+  push_coin({150.0f, 65.0f});
+  push_coin({200.0f, 65.0f});
+
+  // A line of coins on platform to the left
+  for (i32 i = 0; i < 5; i++) {
+    push_coin({-510.0f + (i * 50.0f), -10.0f});
+  }
+
+  push_coin({300.0f, 15.0f});
 
 
   // A grid of coins for testing
