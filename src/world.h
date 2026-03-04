@@ -7,7 +7,7 @@
 
 #include "coin.h"
 #include "def.h"
-#include "player.h"
+#include "upgrades.h"
 #include "window.h"
 
 class Player;
@@ -23,11 +23,17 @@ class World {
     /** The number of tiles in the world. */
     usize numTiles;
 
-    /** The world's coins. */
+    /** The world's collectables. */
     std::array<Coin, MAX_NUM_OBJS> coins;
 
     /** The number of coins in the world. */
     usize numCoins;
+
+    /** The dash upgrade. */
+    Upgrade dashUpgrade;
+
+    /** The double jump upgrade. */
+    Upgrade doubleJumpUpgrade;
 
     /** Asserts that there's room for the tile and pushes it to the world. */
     constexpr void push_tile(const SDL_FRect tile) {
@@ -60,7 +66,10 @@ class World {
     std::span<Coin> get_coins_mut();
 
     /** Initializes the world. */
-    void init();
+    void init(const Player& player);
+
+    /** Updates the world. */
+    void update(Player& player);
 
     /** Draws the stage from the given player's PoV. */
     void draw(const Player& player) const;

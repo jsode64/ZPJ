@@ -5,7 +5,6 @@
 #include "def.h"
 #include "key.h"
 #include "window.h"
-#include "world.h"
 
 class World;
 
@@ -112,12 +111,21 @@ class Player {
     /** Returns the player's battery capacity. */
     i32 get_battery_capacity() const;
 
+      /** Does the player have the dash upgrade? */
+    bool has_dash_unlocked() const;
+
+    /** Does the player have the double jump upgrade? */
+    bool has_double_jump_unlocked() const;
+
+    /** Is the player out of battery? */
+    bool is_out_of_battery() const;
+
     /** Removes the given number of coins from the player, returning `true` if they had that many
      * coins, `false` if not. */
     bool take_coins(i32 cost);
 
-    /** @brief Returns `true` if the player is out of battery, `false` if not. */
-    bool is_out_of_battery() const;
+    /** Gives the given number of coins to the player. */
+    void give_coins(i32 numCoins);
 
     /** Increases the player's battery capacity. */
     void increase_battery_capacity();
@@ -130,6 +138,12 @@ class Player {
 
     /** Increases the player's jump height. */
     void increase_jump();
+
+    /** Unlocks the dash. */
+    void unlock_dash();
+
+    /** Unlocks the double jump. */
+    void unlock_double_jump();
 
     /** Initializes the player. */
     void init();

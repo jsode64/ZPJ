@@ -1,8 +1,11 @@
 #include "world.h"
 
+#include "player.h"
 #include "util.h"
 
-World::World() : tiles{{}}, numTiles(0), coins{}, numCoins(0) { init(); }
+World::World() : tiles{{}}, numTiles{0}, coins{}, numCoins{0}, dashUpgrade{}, doubleJumpUpgrade{} {
+
+}
 
 World::~World() {}
 
@@ -16,7 +19,7 @@ std::span<const Coin> World::get_coins() const {
 
 std::span<Coin> World::get_coins_mut() { return std::span<Coin>(coins.data(), numCoins); }
 
-void World::init() {
+void World::init(const Player& player) {
     numTiles = 0;
     numCoins = 0;
 
@@ -26,6 +29,34 @@ void World::init() {
 
     push_coin({-250.0f, 0.0f});
     push_coin({100.0f, 50.0f});
+
+    doubleJumpUpgrade = Upgrade::double_jump(200.0f, 0.0f, !player.has_double_jump_unlocked());
+}
+
+void World::update(Player& player) {
+    const auto playerBody = player.get_body();
+
+    // Check for collected coins.
+    for (auto& coin: get_coins_mut()) {
+        const SDL_FRect coinBody{
+            coin.get_x(),
+            coin.get_y(),
+            Coin::W,
+            Coin::H,
+        };
+        if (do_rects_collide(playerBody, coinBody)) {
+            player.give_coins(1);
+            coin.collect();
+        }
+    }
+
+    // Check for collected upgrades.
+    if (doubleJumpUpgrade.is_active() && do_rects_collide(playerBody, doubleJumpUpgrade.get_body())) {
+        doubleJumpUpgrade.collect(player);
+    }
+    if (dashUpgrade.is_active() && do_rects_collide(playerBody, dashUpgrade.get_body())) {
+        dashUpgrade.collect(player);
+    }
 }
 
 void World::draw(const Player& player) const {
@@ -67,6 +98,30 @@ void World::draw(const Player& player) const {
 
         // Draw the coin relative to the view.
         const SDL_FRect dst(coinBody.x - view.x, coinBody.y - view.y, coinBody.w, coinBody.h);
+        SDL_RenderFillRect(renderer, &dst);
+    }
+
+    // Draw upgrades.
+    const auto doubleJumpBody = doubleJumpUpgrade.get_body();
+    if (doubleJumpUpgrade.is_active() && do_rects_collide(view, doubleJumpBody)) {
+        const SDL_FRect dst{
+            doubleJumpBody.x - view.x,
+            doubleJumpBody.y - view.y,
+            doubleJumpBody.w,
+            doubleJumpBody.h,
+        };
+        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        SDL_RenderFillRect(renderer, &dst);
+    }
+    const auto dahsBody = dashUpgrade.get_body();
+    if (dashUpgrade.is_active() && do_rects_collide(view, dahsBody)) {
+        const SDL_FRect dst{
+            dahsBody.x - view.x,
+            dahsBody.y - view.y,
+            dahsBody.w,
+            dahsBody.h,
+        };
+        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderFillRect(renderer, &dst);
     }
 }

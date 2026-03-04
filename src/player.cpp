@@ -4,16 +4,18 @@
 #include <print>
 
 #include "assets.h"
+#include "coin.h"
 #include "config.h"
 #include "mixer.h"
 #include "util.h"
+#include "world.h"
 
 Player::Player()
     : jumpKeyState(KEY_DOWN_SCANCODE(JUMP_KEY)), dashKeyState(KEY_DOWN_SCANCODE(DASH_KEY)), body{},
       v{}, xSpeed{BASE_X_SPEED}, jumpSpeed{BASE_JUMP_SPEED},
-      batteryCapacity(STARTING_BATTERY_CAPACITY), batteryCost{BASE_BATTERY_COST},
-      batteryRemaining(-1), dashCooldown(0), numCoins(0), onGround(false), hasDoubleJump(false),
-      isDoubleJumpUnlocked(true), isDashUnlocked(true) {
+      batteryCapacity{STARTING_BATTERY_CAPACITY}, batteryCost{BASE_BATTERY_COST},
+      batteryRemaining{-1}, dashCooldown{0}, numCoins{0}, onGround{false}, hasDoubleJump{false},
+      isDoubleJumpUnlocked{false}, isDashUnlocked{false} {
     init();
 }
 
@@ -36,7 +38,7 @@ void Player::handle_input() {
     }
 
     // Vertical movement.
-    if (jumpKeyState.was_just_pressed() && (onGround || hasDoubleJump)) {
+    if (jumpKeyState.was_just_pressed() && (onGround || (isDoubleJumpUnlocked && hasDoubleJump))) {
         v.y = -jumpSpeed;
         gMixer.play_sound(gAssets.jumpSound);
         hasDoubleJump = onGround;
@@ -94,6 +96,18 @@ void Player::handle_collecting(World& world) {
 
 SDL_FRect Player::get_body() const { return body; }
 
+i32 Player::get_coins() const { return numCoins; }
+
+i32 Player::get_battery_capacity() const { return batteryCapacity; }
+
+bool Player::has_dash_unlocked() const {
+    return isDashUnlocked;
+}
+
+bool Player::has_double_jump_unlocked() const {
+    return isDoubleJumpUnlocked;
+}
+
 bool Player::is_out_of_battery() const { return batteryRemaining < 0; }
 
 bool Player::take_coins(i32 cost) {
@@ -105,9 +119,9 @@ bool Player::take_coins(i32 cost) {
     }
 }
 
-i32 Player::get_coins() const { return numCoins; }
-
-i32 Player::get_battery_capacity() const { return batteryCapacity; }
+void Player::give_coins(const i32 _numCoins) {
+    numCoins += _numCoins;
+}
 
 void Player::increase_battery_capacity() { batteryCapacity += 100; }
 
@@ -116,6 +130,14 @@ void Player::increase_battery_efficiency() { batteryCost -= 2; }
 void Player::increase_speed() { xSpeed += 0.5f; }
 
 void Player::increase_jump() { jumpSpeed += 1.0f; }
+
+void Player::unlock_dash() {
+    isDashUnlocked = true;
+}
+
+void Player::unlock_double_jump() {
+    isDoubleJumpUnlocked = true;
+}
 
 void Player::init() {
     body = {
