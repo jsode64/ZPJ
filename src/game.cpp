@@ -2,9 +2,7 @@
 
 #include "assets.h"
 
-Game::Game() : player(), world(), state{State::Level}, shop{*this, player} {
-    start_level();
-}
+Game::Game() : player(), world(), state{State::Level}, shop{*this, player} { start_level(); }
 
 void Game::start_level() {
     state = State::Level;

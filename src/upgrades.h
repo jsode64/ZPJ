@@ -1,15 +1,15 @@
 #pragma once
 
+#include "def.h"
 #include <SDL3/SDL.h>
 #include <functional>
-#include "def.h"
 
 class Player;
 
 using UpgradeCollectCb = std::function<void(Player& player)>;
 
 class Upgrade {
-private:
+  private:
     /** The upgrade's body. */
     SDL_FRect body;
 
@@ -21,7 +21,7 @@ private:
 
     Upgrade(SDL_FRect body, UpgradeCollectCb cb, bool shouldActivate);
 
-public:
+  public:
     /** An upgrade's width. */
     static constexpr f32 W = 25.0f;
 

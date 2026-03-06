@@ -23,8 +23,7 @@ void Texture::load_bmp(const char* path) {
 }
 
 void Texture::load_text(TTF_Font* font, const std::string& text) {
-    SDL_Surface* surface =
-        TTF_RenderText_Solid(font, text.c_str(), text.size(), {255, 255, 255, 255});
+    SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), text.size(), {255, 255, 255, 255});
     data = SDL_CreateTextureFromSurface(gWindow.get_renderer(), surface);
     SDL_DestroySurface(surface);
 

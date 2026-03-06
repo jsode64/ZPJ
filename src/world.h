@@ -1,14 +1,14 @@
 #pragma once
 
+#include "coin.h"
+#include "def.h"
+#include "tile.h"
+#include "upgrades.h"
+#include "window.h"
 #include <SDL3/SDL.h>
 #include <array>
 #include <cassert>
 #include <span>
-
-#include "coin.h"
-#include "def.h"
-#include "upgrades.h"
-#include "window.h"
 
 class Player;
 
@@ -18,7 +18,7 @@ class World {
     static constexpr usize MAX_NUM_OBJS = 1024;
 
     /** The world's tiles. */
-    std::array<SDL_FRect, MAX_NUM_OBJS> tiles;
+    std::array<Tile, MAX_NUM_OBJS> tiles;
 
     /** The number of tiles in the world. */
     usize numTiles;
@@ -36,10 +36,10 @@ class World {
     Upgrade doubleJumpUpgrade;
 
     /** Asserts that there's room for the tile and pushes it to the world. */
-    constexpr void push_tile(const SDL_FRect tile) {
+    constexpr void push_tile(const SDL_FRect body, Tile::UpdateFn updateFn = nullptr) {
         assert(numTiles < MAX_NUM_OBJS);
 
-        tiles[numTiles] = tile;
+        tiles[numTiles] = Tile(body, updateFn);
         numTiles++;
     }
 
@@ -56,14 +56,8 @@ class World {
 
     ~World();
 
-    /** Returns a span of the world's tiles. */
-    std::span<const SDL_FRect> get_tiles() const;
-
-    /** Returns a span of the world's coins. */
-    std::span<const Coin> get_coins() const;
-
-    /** Returns a span of references to the world's coins. */
-    std::span<Coin> get_coins_mut();
+    /** Returns a span of all tiles. */
+    std::span<const Tile> get_tiles() const;
 
     /** Initializes the world. */
     void init(const Player& player);

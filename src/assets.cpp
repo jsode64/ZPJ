@@ -7,8 +7,7 @@ Assets gAssets;
 
 void Assets::load_assets() {
     if (!TTF_Init() || !(font = TTF_OpenFont(FONT_PATH, 16.0f))) {
-        const auto e =
-            std::format("Failed to load font from `{}`: \"{}\"", FONT_PATH, SDL_GetError());
+        const auto e = std::format("Failed to load font from `{}`: \"{}\"", FONT_PATH, SDL_GetError());
         throw std::runtime_error(e);
     }
 

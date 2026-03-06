@@ -20,8 +20,7 @@ void Mixer::play_sound(Sound& sound) {
 }
 
 void Mixer::init() {
-    if (!MIX_Init() ||
-        !(mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr))) {
+    if (!MIX_Init() || !(mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr))) {
         const auto e = std::format("Failed to init SDL mixer: \"{}\"", SDL_GetError());
         throw std::runtime_error(e);
     }

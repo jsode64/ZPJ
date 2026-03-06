@@ -11,10 +11,9 @@
 #include "world.h"
 
 Player::Player()
-    : jumpKeyState(KEY_DOWN_SCANCODE(JUMP_KEY)), dashKeyState(KEY_DOWN_SCANCODE(DASH_KEY)), body{},
-      v{}, xSpeed{BASE_X_SPEED}, jumpSpeed{BASE_JUMP_SPEED},
-      batteryCapacity{STARTING_BATTERY_CAPACITY}, batteryCost{BASE_BATTERY_COST},
-      batteryRemaining{-1}, dashCooldown{0}, numCoins{0}, onGround{false}, hasDoubleJump{false},
+    : jumpKeyState(KEY_DOWN_SCANCODE(JUMP_KEY)), dashKeyState(KEY_DOWN_SCANCODE(DASH_KEY)), body{}, v{},
+      xSpeed{BASE_X_SPEED}, jumpSpeed{BASE_JUMP_SPEED}, batteryCapacity{1'000'000}, batteryCost{BASE_BATTERY_COST},
+      batteryRemaining{1'000'000}, dashCooldown{0}, numCoins{0}, onGround{false}, hasDoubleJump{false},
       isDoubleJumpUnlocked{false}, isDashUnlocked{false} {
     init();
 }
@@ -52,11 +51,12 @@ void Player::handle_movement(const World& world) {
     // Check for horizontal collisions.
     body.x += v.x;
     for (const auto& tile : world.get_tiles()) {
-        if (do_rects_collide(tile, body)) {
+        const auto tileBody = tile.get_body();
+        if (do_rects_collide(tileBody, body)) {
             if (v.x >= 0.0f) { // Colliding from the left.
-                body.x = tile.x - body.w;
+                body.x = tileBody.x - body.w;
             } else { // Colliding from the right.
-                body.x = tile.x + tile.w;
+                body.x = tileBody.x + tileBody.w;
             }
             v.x = 0;
         }
@@ -65,31 +65,16 @@ void Player::handle_movement(const World& world) {
     // Check for vertical collisions.
     body.y += v.y;
     for (const auto& tile : world.get_tiles()) {
-        if (do_rects_collide(tile, body)) {
+        const auto tileBody = tile.get_body();
+        if (do_rects_collide(tileBody, body)) {
             if (v.y >= 0.0f) { // Colliding from the top.
-                body.y = tile.y - body.h;
+                body.y = tileBody.y - body.h;
                 onGround = true;
                 hasDoubleJump = isDoubleJumpUnlocked;
             } else { // Colliding from the bottom.
-                body.y = tile.y + tile.h;
+                body.y = tileBody.y + tileBody.h;
             }
             v.y = 0;
-        }
-    }
-}
-
-void Player::handle_collecting(World& world) {
-    // Check for collected coins.
-    SDL_FRect coinBody({}, {}, Coin::W, Coin::H);
-    for (auto& coin : world.get_coins_mut()) {
-        coinBody.x = coin.get_x();
-        coinBody.y = coin.get_y();
-
-        // Collect the coin if it's active and touching.
-        if (coin.is_active() && do_rects_collide(body, coinBody)) {
-            coin.collect();
-            numCoins += 1;
-            gMixer.play_sound(gAssets.coinCollectSound);
         }
     }
 }
@@ -100,13 +85,9 @@ i32 Player::get_coins() const { return numCoins; }
 
 i32 Player::get_battery_capacity() const { return batteryCapacity; }
 
-bool Player::has_dash_unlocked() const {
-    return isDashUnlocked;
-}
+bool Player::has_dash_unlocked() const { return isDashUnlocked; }
 
-bool Player::has_double_jump_unlocked() const {
-    return isDoubleJumpUnlocked;
-}
+bool Player::has_double_jump_unlocked() const { return isDoubleJumpUnlocked; }
 
 bool Player::is_out_of_battery() const { return batteryRemaining < 0; }
 
@@ -119,9 +100,7 @@ bool Player::take_coins(i32 cost) {
     }
 }
 
-void Player::give_coins(const i32 _numCoins) {
-    numCoins += _numCoins;
-}
+void Player::give_coins(const i32 _numCoins) { numCoins += _numCoins; }
 
 void Player::increase_battery_capacity() { batteryCapacity += 100; }
 
@@ -131,13 +110,9 @@ void Player::increase_speed() { xSpeed += 0.5f; }
 
 void Player::increase_jump() { jumpSpeed += 1.0f; }
 
-void Player::unlock_dash() {
-    isDashUnlocked = true;
-}
+void Player::unlock_dash() { isDashUnlocked = true; }
 
-void Player::unlock_double_jump() {
-    isDoubleJumpUnlocked = true;
-}
+void Player::unlock_double_jump() { isDoubleJumpUnlocked = true; }
 
 void Player::init() {
     body = {
@@ -154,7 +129,6 @@ void Player::init() {
 void Player::update(World& world) {
     handle_input();
     handle_movement(world);
-    handle_collecting(world);
 
     batteryRemaining -= batteryCost;
     dashCooldown--;
@@ -166,10 +140,8 @@ void Player::draw() const {
     const f32 winH = f32(gWindow.get_height());
 
     // Draw the player body.
-    const SDL_FRect bodyDst((f32(gWindow.get_width()) - body.w) / 2.0f,
-                            (f32(gWindow.get_height()) - body.h) / 2.0f,
-                            body.w,
-                            body.h);
+    const SDL_FRect bodyDst(
+        (f32(gWindow.get_width()) - body.w) / 2.0f, (f32(gWindow.get_height()) - body.h) / 2.0f, body.w, body.h);
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderFillRect(renderer, &bodyDst);
 

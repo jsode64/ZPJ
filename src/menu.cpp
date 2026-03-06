@@ -16,8 +16,8 @@ void Menu::render_button(const Button& button, SDL_Renderer* renderer, TTF_Font*
 
     // Draw button text
     if (font) {
-        SDL_Surface* text_surface = TTF_RenderText_Solid(
-            font, button.label.c_str(), button.label.length(), SDL_Color{255, 255, 255, 255});
+        SDL_Surface* text_surface =
+            TTF_RenderText_Solid(font, button.label.c_str(), button.label.length(), SDL_Color{255, 255, 255, 255});
         if (text_surface) {
             SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
             if (text_texture) {

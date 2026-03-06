@@ -94,9 +94,6 @@ class Player {
     /** Handles movement and collision. */
     void handle_movement(const World& world);
 
-    /** Handles player collecting coins/upgrades. */
-    void handle_collecting(World& world);
-
   public:
     Player();
 
@@ -111,7 +108,7 @@ class Player {
     /** Returns the player's battery capacity. */
     i32 get_battery_capacity() const;
 
-      /** Does the player have the dash upgrade? */
+    /** Does the player have the dash upgrade? */
     bool has_dash_unlocked() const;
 
     /** Does the player have the double jump upgrade? */

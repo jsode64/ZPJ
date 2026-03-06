@@ -1,13 +1,12 @@
 #include "window.h"
 
+#include "assets.h"
 #include <exception>
 #include <format>
-#include "assets.h"
 
 Window gWindow;
 
-Window::Window()
-    : window{nullptr}, renderer{nullptr}, font{nullptr}, w{0}, h{0}, shouldClose{true} {}
+Window::Window() : window{nullptr}, renderer{nullptr}, font{nullptr}, w{0}, h{0}, shouldClose{true} {}
 
 Window::~Window() {
     TTF_CloseFont(font);
