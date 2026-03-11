@@ -12,6 +12,7 @@ std::span<const Tile> World::get_tiles() const { return std::span(tiles.data(), 
 void World::init(const Player& player) {
     numTiles = 0;
     numCoins = 0;
+    i32 it = 0;       // iterator for for loops
 
     // Tiles for the edge of the world
     push_tile({-2000.0f, 100.0f, 4000.0f, 50.0f});
@@ -29,6 +30,12 @@ void World::init(const Player& player) {
     push_tile({-250.0f, 50.0f, 100.0f, 50.0f});
     push_tile({-550.0f, 25.0f, 300.0f, 75.0f});
 
+    push_tile({-650.0f, 25.0f, 100.0f, 25.0f}, TILE_CYCLE(-650.0f, 25.0f, -650.0f, -275.0f, 3.0f));
+    push_tile({-850.0f, 25.0f, 200.0f, 75.0f});
+
+    push_tile({-1250.0f, -275.0f, 100.0f, 25.0f}, TILE_CYCLE(-1250.0f, -275.0f, -850.0f, -275.0f, 3.0f));
+    push_tile({-1600.0f, -275.0f, 250.0f, 75.0f});
+
     // Staircase to the right
     push_tile({250.0f, 50.0f, 100.0f, 50.0f});
     push_tile({450.0f, 0.0f, 100.0f, 100.0f});
@@ -40,6 +47,9 @@ void World::init(const Player& player) {
     push_tile({500.0f, -225.0f, 50.0f, 50.0f});
     push_tile({700.0f, -255.0f, 50.0f, 50.0f});
     push_tile({900.0f, -300.0f, 200.0f, 50.0f});
+
+    push_tile({1200.0f, -300.0f, 50.0f, 50.0f}, TILE_CYCLE(1200.0f, -300.0f, 1200.0f, -500.0f, 2.0f));
+
     push_tile({-300.0f, -175.0f, 150.0f, 50.0f});
     push_tile({-350.0f, -400.0f, 50.0f, 275.0f});
 
@@ -53,6 +63,15 @@ void World::init(const Player& player) {
         push_coin({-510.0f + (i * 50.0f), -10.0f});
     }
 
+    // A triangle of coins on the floating platform to the left
+    it = 1;
+    for (i32 i = 0; i < 5; i++) {
+        for (i32 j = 0; j < it; j++) {
+            push_coin({-1480.0f + (i * -15.0f) + (j * 30.0f), -430.0f + (i * 30.0f)});
+        }
+        it++;
+    }
+
     push_coin({300.0f, 15.0f});
 
     // A grid of coins for testing
@@ -63,9 +82,6 @@ void World::init(const Player& player) {
       }
     }
     */
-
-    push_coin({-250.0f, 0.0f});
-    push_coin({100.0f, 50.0f});
 
     doubleJumpUpgrade = Upgrade::double_jump(200.0f, 0.0f, !player.has_double_jump_unlocked());
 }

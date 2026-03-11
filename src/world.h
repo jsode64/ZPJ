@@ -45,7 +45,7 @@ class World {
 
     /** Asserts that there's room for the coin and pushes it to the world. */
     constexpr void push_coin(const Coin coin) {
-        assert(numTiles < MAX_NUM_OBJS);
+        assert(numCoins < MAX_NUM_OBJS);
 
         coins[numCoins] = coin;
         numCoins++;
