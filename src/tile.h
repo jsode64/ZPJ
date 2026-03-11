@@ -6,19 +6,22 @@
 
 class Tile {
   public:
-    using UpdateFn = Tile (*)(const Tile&);
+    using UpdateFn = void (*)(Tile&);
 
   private:
     /** The tile's body. */
     SDL_FRect body;
 
+    /** The tile's velocity. */
+    SDL_FPoint v;
+
     /** The tile's update function. */
     UpdateFn updateFn;
 
   public:
-    constexpr Tile() : body{{}}, updateFn{nullptr} {}
+    constexpr Tile() : body{{}}, v{{}}, updateFn{nullptr} {}
 
-    constexpr Tile(SDL_FRect body, UpdateFn updateFn) : body{body}, updateFn{updateFn} {}
+    constexpr Tile(SDL_FRect body, UpdateFn updateFn) : body{body}, v{{}}, updateFn{updateFn} {}
 
     /** Returns the tile's update function. */
     UpdateFn get_update_fn() const;
@@ -26,12 +29,18 @@ class Tile {
     /** Returns the tile's body. */
     SDL_FRect get_body() const;
 
+    /** Returns the tile's velocity. */
+    SDL_FPoint get_v() const;
+
+    /** Sets the tile's velocity. */
+    void set_v(SDL_FPoint v);
+
     /** Updates the tile. */
     void update();
 };
 
 #define TILE_CYCLE(begX, begY, endX, endY, t)                                                                          \
-    [](const Tile& tile) {                                                                                             \
+    [](Tile& tile) {                                                                                                   \
         const auto midX = (begX + endX) / 2.0f;                                                                        \
         const auto midY = (begY + endY) / 2.0f;                                                                        \
         const auto rangeX = (endX - begX) / 2.0f;                                                                      \
@@ -39,6 +48,10 @@ class Tile {
         const auto src = tile.get_body();                                                                              \
         const auto ticks = SDL_GetTicks();                                                                             \
         const f32 m = std::sin(static_cast<f32>(ticks) / (t * 500.0f));                                                \
-        const SDL_FRect dst{midX + (rangeX * m), midY + (rangeY * m), src.w, src.h};                                   \
-        return Tile(dst, tile.get_update_fn());                                                                        \
+        const auto body = tile.get_body();                                                                             \
+        const SDL_FPoint v{                                                                                            \
+            (midX + (rangeX * m)) - body.x,                                                                            \
+            (midY + (rangeY * m)) - body.y,                                                                            \
+        };                                                                                                             \
+        tile.set_v(v);                                                                                                 \
     }

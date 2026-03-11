@@ -1,10 +1,11 @@
 #pragma once
 
-#include <SDL3/SDL.h>
-
 #include "def.h"
 #include "key.h"
+#include "tile.h"
 #include "window.h"
+#include <SDL3/SDL.h>
+#include <optional>
 
 class World;
 
@@ -55,6 +56,9 @@ class Player {
     /** The player's velocity. */
     SDL_FPoint v;
 
+    /** The tile the player is standing on (or none). */
+    std::optional<const Tile*> ground;
+
     /** X speed. */
     f32 xSpeed;
 
@@ -75,9 +79,6 @@ class Player {
 
     /** The coins the player has to spend. */
     i32 numCoins;
-
-    /** Is the player on the ground? */
-    bool onGround;
 
     /** Has the player double jumped since last on the ground? */
     bool hasDoubleJump;
@@ -113,6 +114,15 @@ class Player {
 
     /** Does the player have the double jump upgrade? */
     bool has_double_jump_unlocked() const;
+
+    /** Is the player on the ground? */
+    bool is_on_ground() const;
+
+    /** Is the player alive (not crushed)? */
+    bool is_alive() const;
+
+    /** Kills the player by draining battery. */
+    void kill();
 
     /** Is the player out of battery? */
     bool is_out_of_battery() const;
