@@ -102,7 +102,7 @@ void World::update(Player& player) {
             Coin::W,
             Coin::H,
         };
-        if (do_rects_collide(playerBody, coinBody)) {
+        if (do_rects_collide(playerBody, coinBody) && coin.is_active()) {
             player.give_coins(1);
             coin.collect();
         }

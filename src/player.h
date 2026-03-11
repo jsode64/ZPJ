@@ -122,7 +122,7 @@ class Player {
     bool take_coins(i32 cost);
 
     /** Gives the given number of coins to the player. */
-    void give_coins(i32 numCoins);
+    void give_coins(i32 _numCoins);
 
     /** Increases the player's battery capacity. */
     void increase_battery_capacity();
