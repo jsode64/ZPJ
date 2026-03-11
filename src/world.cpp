@@ -26,7 +26,7 @@ void World::init(const Player& player) {
     push_tile({100.0f, -175.0f, 50.0f, 150.0f});
 
     // Staircase to the left
-    push_tile({-150.0f, 75.0f, 75.0f, 25.0f});
+    push_tile({-150.0f, 75.0f, 75.0f, 25.0f}, TILE_CYCLE(-150.0f, 75.0f, 150.0f, 150.0f, 1.0f));
     push_tile({-250.0f, 50.0f, 100.0f, 50.0f});
     push_tile({-550.0f, 25.0f, 300.0f, 75.0f});
 
@@ -102,7 +102,7 @@ void World::update(Player& player) {
             Coin::W,
             Coin::H,
         };
-        if (do_rects_collide(playerBody, coinBody) && coin.is_active()) {
+        if (coin.is_active() && do_rects_collide(playerBody, coinBody)) {
             player.give_coins(1);
             coin.collect();
         }
