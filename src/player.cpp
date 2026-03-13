@@ -1,7 +1,6 @@
 #include "player.h"
 
 #include <algorithm>
-#include <print>
 
 #include "assets.h"
 #include "coin.h"
@@ -14,7 +13,7 @@ Player::Player()
     : jumpKeyState(KEY_DOWN_SCANCODE(JUMP_KEY)), dashKeyState(KEY_DOWN_SCANCODE(DASH_KEY)), body{}, v{}, ground{},
       xSpeed{BASE_X_SPEED}, jumpSpeed{BASE_JUMP_SPEED}, batteryCapacity{1'000'000}, batteryCost{BASE_BATTERY_COST},
       batteryRemaining{1'000'000}, dashCooldown{0}, numCoins{0}, hasDoubleJump{false}, isDoubleJumpUnlocked{false},
-      isDashUnlocked{false} {
+      isDashUnlocked{false}, coyoteTime{0} {
     init();
 }
 
@@ -37,10 +36,11 @@ void Player::handle_input() {
     }
 
     // Vertical movement.
-    if (jumpKeyState.was_just_pressed() && (is_on_ground() || (isDoubleJumpUnlocked && hasDoubleJump))) {
+    if (jumpKeyState.was_just_pressed() && (is_on_ground() || coyoteTime > 0 || (isDoubleJumpUnlocked && hasDoubleJump))) {
         v.y = -jumpSpeed;
         gMixer.play_sound(gAssets.jumpSound);
-        hasDoubleJump = is_on_ground();
+        hasDoubleJump = is_on_ground() || coyoteTime > 0;
+        coyoteTime = 0;
     }
     v.y += GRAVITY;
 }
@@ -197,6 +197,7 @@ void Player::init() {
     v = {0.0f, 0.0f};
     batteryRemaining = batteryCapacity;
     ground = std::nullopt;
+    coyoteTime = 0;
 }
 
 void Player::update(World& world) {
@@ -205,6 +206,13 @@ void Player::update(World& world) {
 
     batteryRemaining -= batteryCost;
     dashCooldown--;
+
+    // Reset coyote time when on ground.
+    if (is_on_ground()) {
+        coyoteTime = MAX_COYOTE_TIME;
+    } else if (coyoteTime > 0) {
+        coyoteTime--;
+    }
 }
 
 void Player::draw() const {

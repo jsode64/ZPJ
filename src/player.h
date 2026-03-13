@@ -44,6 +44,9 @@ class Player {
     /** The dash key. */
     static constexpr SDL_Scancode DASH_KEY = SDL_SCANCODE_LSHIFT;
 
+    /** The maximum coyote time in ticks. */
+    static constexpr i32 MAX_COYOTE_TIME = 8;
+
     /** The jump key state. */
     Key jumpKeyState;
 
@@ -79,6 +82,9 @@ class Player {
 
     /** The coins the player has to spend. */
     i32 numCoins;
+
+    /** The coyote timing remaining. */
+    i32 coyoteTime;
 
     /** Has the player double jumped since last on the ground? */
     bool hasDoubleJump;
