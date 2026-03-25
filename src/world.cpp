@@ -26,15 +26,33 @@ void World::init(const Player& player) {
     push_tile({100.0f, -175.0f, 50.0f, 150.0f});
 
     // Staircase to the left
-    push_tile({-150.0f, 75.0f, 75.0f, 25.0f}, TILE_CYCLE(-150.0f, 75.0f, 150.0f, 150.0f, 1.0f));
+    push_tile({-150.0f, 75.0f, 75.0f, 25.0f});
     push_tile({-250.0f, 50.0f, 100.0f, 50.0f});
     push_tile({-550.0f, 25.0f, 300.0f, 75.0f});
 
     push_tile({-650.0f, 25.0f, 100.0f, 25.0f}, TILE_CYCLE(-650.0f, 25.0f, -650.0f, -275.0f, 3.0f));
+    push_tile({-650.0f, 50.0f, 100.0f, 50.0f});
     push_tile({-850.0f, 25.0f, 200.0f, 75.0f});
 
     push_tile({-1250.0f, -275.0f, 100.0f, 25.0f}, TILE_CYCLE(-1250.0f, -275.0f, -850.0f, -275.0f, 3.0f));
     push_tile({-1600.0f, -275.0f, 250.0f, 75.0f});
+
+    // Platforming challenge to the far left for the double jump upgrade
+    push_tile({-1650.0f, -550.0f, 50.0f, 550.0f});
+    push_tile({-2000.0f, -550.0f, 350.0f, 50.0f});
+    push_tile({-2000.0f, 75.0f, 50.0f, 25.0f});
+    push_tile({-1890.0f, 40.0f, 25.0f, 25.0f});
+    push_tile({-1790.0f, 5.0f, 25.0f, 25.0f});
+    push_tile({-1700.0f, -25.0f, 50.0f, 25.0f});
+    push_tile({-1800.0f, -55.0f, 50.0f, 25.0f}, TILE_CYCLE(-1800.0f, -55.0f, -2000.0f, -55.0f, 2.0f));
+    push_tile({-1700.0f, -85.0f, 50.0f, 25.0f}, TILE_CYCLE(-1700.0f, -85.0f, -2000.0f, -85.0f, 3.0f));
+    push_tile({-1700.0f, -115.0f, 50.0f, 25.0f}, TILE_CYCLE(-1700.0f, -115.0f, -2000.0f, -115.0f, 1.75f));
+    push_tile({-1750.0f, -150.0f, 50.0f, 25.0f}, TILE_CYCLE(-1750.0f, -150.0f, -1950.0f, -150.0f, 2.5f));
+    push_tile({-1950.0f, -250.0f, 50.0f, 25.0f}, TILE_CYCLE(-1950.0f, -250.0f, -1750.0f, -250.0f, 2.5f));
+    push_tile({-2000.0f, -150.0f, 50.0f, 25.0f}, TILE_CYCLE(-2000.0f, -150.0f, -2000.0f, -350.0f, 2.0f));
+    push_tile({-1700.0f, -150.0f, 50.0f, 25.0f}, TILE_CYCLE(-1700.0f, -150.0f, -1700.0f, -350.0f, 2.0f));
+    push_tile({-1935.0f, -400.0f, 225.0f, 25.0f});
+    push_tile({-1835.0f, -500.0f, 25.0f, 125.0f});
 
     // Staircase to the right
     push_tile({250.0f, 50.0f, 100.0f, 50.0f});
@@ -43,6 +61,7 @@ void World::init(const Player& player) {
     push_tile({750.0f, 0.0f, 50.0f, 100.0f});
     push_tile({800.0f, 50.0f, 50.0f, 50.0f});
 
+    // Floating box staircase to the right
     push_tile({300.0f, -200.0f, 50.0f, 50.0f});
     push_tile({500.0f, -225.0f, 50.0f, 50.0f});
     push_tile({700.0f, -255.0f, 50.0f, 50.0f});
@@ -50,8 +69,15 @@ void World::init(const Player& player) {
 
     push_tile({1200.0f, -300.0f, 50.0f, 50.0f}, TILE_CYCLE(1200.0f, -300.0f, 1200.0f, -500.0f, 2.0f));
 
+    // The L shaped floating platform to the left
     push_tile({-300.0f, -175.0f, 150.0f, 50.0f});
     push_tile({-350.0f, -400.0f, 50.0f, 275.0f});
+
+    // The floating platforms accessible via the L shaped platform
+    push_tile({-150.0f, -425.0f, 250.0f, 50.0f});
+    push_tile({225.0f, -425.0f, 50.0f, 50.0f}, TILE_CYCLE(225.0f, -425.0f, 425.0f, -625.0f, 2.0f));
+    push_tile({350.0f, -825.0f, 50.0f, 50.0f}, TILE_CYCLE(350.0f, -825.0f, 550.0f, -625.0f, 2.0f));
+    push_tile({-50.0f, -825.0f, 250.0f, 50.0f});
 
     // Coins to the right
     push_coin({100.0f, 65.0f});
@@ -72,6 +98,13 @@ void World::init(const Player& player) {
         it++;
     }
 
+    // A square of coins in the platforming challenge to the far left
+    for (i32 i = 0; i < 4; i++) {
+        for (i32 j = 0; j < 3; j++) {
+            push_coin({-1800.0f + (i * 20.0f), -485.0f + (j * 25.0f)});
+        }
+    }
+
     push_coin({300.0f, 15.0f});
 
     // A grid of coins for testing
@@ -83,7 +116,8 @@ void World::init(const Player& player) {
     }
     */
 
-    doubleJumpUpgrade = Upgrade::double_jump(200.0f, 0.0f, !player.has_double_jump_unlocked());
+    doubleJumpUpgrade = Upgrade::double_jump(-1900.0f, -460.0f, !player.has_double_jump_unlocked());
+
 }
 
 void World::update(Player& player) {
