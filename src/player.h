@@ -18,10 +18,10 @@ class Player {
     static constexpr f32 H = 32.0f;
 
     /** The player's x-speed. */
-    static constexpr f32 BASE_X_SPEED = 6.0f;
+    static constexpr f32 BASE_X_SPEED = 5.0f;
 
     /** The player's jump speed. */
-    static constexpr f32 BASE_JUMP_SPEED = 15.0f;
+    static constexpr f32 BASE_JUMP_SPEED = 5.0f;
 
     /** The player's dash speed. */
     static constexpr f32 DASH_SPEED = 30.0f;
@@ -33,13 +33,13 @@ class Player {
     static constexpr i32 STARTING_BATTERY_CAPACITY = BASE_BATTERY_COST * 30;
 
     /** The left key. */
-    static constexpr SDL_Scancode LEFT_KEY = SDL_SCANCODE_A;
+    static constexpr SDL_Scancode LEFT_KEY = SDL_SCANCODE_LEFT;
 
     /** The right key. */
-    static constexpr SDL_Scancode RIGHT_KEY = SDL_SCANCODE_D;
+    static constexpr SDL_Scancode RIGHT_KEY = SDL_SCANCODE_RIGHT;
 
     /** The jump key. */
-    static constexpr SDL_Scancode JUMP_KEY = SDL_SCANCODE_SPACE;
+    static constexpr SDL_Scancode JUMP_KEY = SDL_SCANCODE_UP;
 
     /** The dash key. */
     static constexpr SDL_Scancode DASH_KEY = SDL_SCANCODE_LSHIFT;
@@ -62,8 +62,14 @@ class Player {
     /** The tile the player is standing on (or none). */
     std::optional<const Tile*> ground;
 
+    /** X speed multiplier. **/
+    f32 xSpeedMulti;
+
     /** X speed. */
     f32 xSpeed;
+
+    /** Jump speed multiplier. **/
+    f32 jumpSpeedMulti;
 
     /** Jump speed. */
     f32 jumpSpeed;

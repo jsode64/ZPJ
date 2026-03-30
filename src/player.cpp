@@ -11,8 +11,9 @@
 
 Player::Player()
     : jumpKeyState(KEY_DOWN_SCANCODE(JUMP_KEY)), dashKeyState(KEY_DOWN_SCANCODE(DASH_KEY)), body{}, v{}, ground{},
-      xSpeed{BASE_X_SPEED}, jumpSpeed{BASE_JUMP_SPEED}, batteryCapacity{1'000'000}, batteryCost{BASE_BATTERY_COST},
-      batteryRemaining{1'000'000}, dashCooldown{0}, numCoins{0}, hasDoubleJump{false}, isDoubleJumpUnlocked{false},
+      xSpeedMulti{1.0f}, xSpeed{BASE_X_SPEED * xSpeedMulti}, jumpSpeedMulti{0.0f}, jumpSpeed{BASE_JUMP_SPEED * jumpSpeedMulti},
+      batteryCapacity{1'000}, batteryCost{BASE_BATTERY_COST}, batteryRemaining{1'000},
+      dashCooldown{0}, numCoins{1000}, hasDoubleJump{false}, isDoubleJumpUnlocked{false},
       isDashUnlocked{false}, coyoteTime{0} {
     init();
 }
@@ -179,9 +180,15 @@ void Player::increase_battery_capacity() { batteryCapacity += 100; }
 
 void Player::increase_battery_efficiency() { batteryCost -= 2; }
 
-void Player::increase_speed() { xSpeed += 0.5f; }
+void Player::increase_speed() {
+    xSpeedMulti += 0.25f; 
+    xSpeed = BASE_X_SPEED * sqrt(xSpeedMulti);
+}
 
-void Player::increase_jump() { jumpSpeed += 1.0f; }
+void Player::increase_jump() {
+    jumpSpeedMulti += 1.0f;
+    jumpSpeed = BASE_JUMP_SPEED * sqrt(jumpSpeedMulti);
+}
 
 void Player::unlock_dash() { isDashUnlocked = true; }
 

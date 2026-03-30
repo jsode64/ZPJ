@@ -13,17 +13,20 @@ Shop::Shop(Game& game, Player& player) : game{game}, player{player}, click(KEY_D
     const f32 W = (BUTTON_W * 2) + (BUTTON_SPACING * 3);
     const f32 X = (gWindow.get_width() - W) / 2;
     const f32 Y = 150;
-    const Button INCREASE_CAPACITY_BUTTON{{X, Y, BUTTON_W, BUTTON_H}, "INCREASE\nCAPACITY", [](Player& p, Game&) {
-                                              if (p.take_coins(2)) {
-                                                  p.increase_battery_capacity();
-                                              }
-                                          }};
-    const Button EXIT_SHOP_BUTTON{
-        {X + BUTTON_W + BUTTON_SPACING, Y, BUTTON_W, BUTTON_H}, "EXIT SHOP", [](Player&, Game& g) { g.start_level(); }};
-    const Button INCREASE_JUMP_BUTTON{
-        {X, Y + BUTTON_H + BUTTON_SPACING, BUTTON_W, BUTTON_H}, "INCREASE\nJUMP", [](Player& p, Game&) {
-            if (p.take_coins(1)) {
+    const Button INCREASE_CAPACITY_BUTTON {
+        {X, Y, BUTTON_W, BUTTON_H}, "INCREASE\nCAPACITY", [](Player& p, Game&, Shop& s) {
+            if (p.take_coins(s.batteryCapacityCost)) {
+                p.increase_battery_capacity();
+                s.batteryCapacityCost += 1;
+            }
+        }};
+    const Button EXIT_SHOP_BUTTON {
+        {X + BUTTON_W + BUTTON_SPACING, Y, BUTTON_W, BUTTON_H}, "EXIT SHOP", [](Player&, Game& g, Shop&) { g.start_level(); }};
+    const Button INCREASE_JUMP_BUTTON {
+        {X, Y + BUTTON_H + BUTTON_SPACING, BUTTON_W, BUTTON_H}, "INCREASE\nJUMP", [](Player& p, Game&, Shop& s) {
+            if (p.take_coins(s.jumpUpgradeCost)) {
                 p.increase_jump();
+                s.jumpUpgradeCost += 1;
             }
         }};
 
@@ -45,7 +48,7 @@ void Shop::update(f32 mouseX, f32 mouseY, bool mouse_clicked) {
     // Find which button was clicked.
     for (const auto& button : buttons) {
         if (is_point_in_rect({f32{mouseX}, f32{mouseY}}, button.body)) {
-            button.cb(player, game);
+            button.cb(player, game, *this);
             return;
         }
     }

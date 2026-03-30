@@ -9,8 +9,9 @@
 #include <vector>
 
 class Game;
+class Shop;
 
-using ButtonCb = std::function<void(Player&, Game&)>;
+using ButtonCb = std::function<void(Player&, Game&, Shop&)>;
 
 struct Button {
     /** Button's body. */

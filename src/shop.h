@@ -28,6 +28,12 @@ class Shop : public Menu {
     /** Click. */
     Key click;
 
+    // Cost of upgrading the battery capacity.
+    i32 batteryCapacityCost = 1;
+
+    // Cost of upgrading the jump.
+    i32 jumpUpgradeCost = 1;
+
   public:
     Shop(Game& game, Player& player);
 
