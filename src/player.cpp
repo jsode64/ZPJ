@@ -1,7 +1,7 @@
 #include "player.h"
 
 #include <algorithm>
-
+#include <print>
 #include "assets.h"
 #include "coin.h"
 #include "config.h"
@@ -13,7 +13,7 @@ Player::Player()
     : jumpKeyState(KEY_DOWN_SCANCODE(JUMP_KEY)), dashKeyState(KEY_DOWN_SCANCODE(DASH_KEY)), body{}, v{}, ground{},
       xSpeed{BASE_X_SPEED}, jumpSpeed{BASE_JUMP_SPEED}, batteryCapacity{1'000'000}, batteryCost{BASE_BATTERY_COST},
       batteryRemaining{1'000'000}, dashCooldown{0}, numCoins{0}, hasDoubleJump{false}, isDoubleJumpUnlocked{false},
-      isDashUnlocked{false}, coyoteTime{0} {
+      isDashUnlocked{false}, coyoteTime{0}, isFacingLeft{false} {
     init();
 }
 
@@ -29,8 +29,10 @@ void Player::handle_input() {
     const f32 speed = isDashing ? DASH_SPEED : xSpeed;
     if (keys[LEFT_KEY]) {
         v.x = -speed;
+        isFacingLeft = true;
     } else if (keys[RIGHT_KEY]) {
         v.x = speed;
+        isFacingLeft = false;
     } else {
         v.x = 0.0f;
     }
@@ -60,7 +62,6 @@ void Player::handle_movement(const World& world) {
     if (ground.has_value()) {
         x += ground.value()->get_v().x;
     }
-
     ground = std::nullopt;
 
     for (const auto& tile : world.get_tiles()) {
@@ -94,27 +95,15 @@ void Player::handle_movement(const World& world) {
                     hitLeft = true;
                 }
             } else {
-                // Player not moving horizontally, resolve based on previous position.
-                if (body.x + body.w <= tileBody.x) {
-                    // We were completely to the left of the tile.
-                    x = tileBody.x - body.w;
+                if (body.x + body.w > tileBody.x) {
+                    body.x = tileBody.x - body.w;
                     hitRight = true;
-                } else if (body.x >= tileBody.x + tileBody.w) {
-                    // We were completely to the right of the tile.
-                    x = tileBody.x + tileBody.w;
-                    hitLeft = true;
                 } else {
-                    // We were overlapping or tile hit us - use center positions.
-                    if (body.x + body.w / 2.0f < tileBody.x + tileBody.w / 2.0f) {
-                        x = tileBody.x - body.w;
-                        hitRight = true;
-                    } else {
-                        x = tileBody.x + tileBody.w;
-                        hitLeft = true;
-                    }
+                    body.x = tileBody.x + tileBody.w;
+                    hitLeft = true;
                 }
-                v.x = 0.0f;
             }
+            v.x = 0.0f;
         }
 
         // Vertical collision check.
@@ -144,6 +133,29 @@ void Player::handle_movement(const World& world) {
     // Move to new position.
     body.x = x;
     body.y = y;
+}
+
+SDL_FPoint Player::get_texture_coordinates() const {
+    const u32 nFrames = gWindow.get_frames();
+    if (!is_on_ground()) {
+        const f32 offset = (nFrames % 30 > 14) ? 8.0f : 0.0f;
+        return {
+            offset + ((v.y > 0.0f) ? 16.0f : 0.0f),
+            8.0f,
+        };
+    } else if (v.x != 0.0f) {
+        const u32 cycle = (nFrames / 12) % 4;
+        const f32 x = (cycle == 1)
+            ? 8.0f
+            : (cycle == 3)
+                ? 16.0f
+                : 0.0f;
+        return {
+            x, 0.0f
+        };
+    } else {
+        return {0.0f, 0.0f};
+    }
 }
 
 SDL_FRect Player::get_body() const { return body; }
@@ -221,10 +233,15 @@ void Player::draw() const {
     const f32 winH = f32(gWindow.get_height());
 
     // Draw the player body.
+    const auto srcPos = get_texture_coordinates();
+    const SDL_FRect src{
+        srcPos.x, srcPos.y,
+        8.0f, 8.0f,
+    };
     const SDL_FRect bodyDst(
         (f32(gWindow.get_width()) - body.w) / 2.0f, (f32(gWindow.get_height()) - body.h) / 2.0f, body.w, body.h);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderFillRect(renderer, &bodyDst);
+    SDL_RenderTextureRotated(renderer, gAssets.player.get(), &src, &bodyDst, 0.0, nullptr, 
+isFacingLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
 
     // Draw the battery meter.
     const f32 percentBattery = f32(batteryRemaining) / f32(batteryCapacity);

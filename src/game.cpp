@@ -12,8 +12,8 @@ void Game::start_level() {
 
 void Game::update() {
     if (state == State::Level) {
-        player.update(world);
         world.update(player);
+        player.update(world);
 
         // Go to shop if the player is out of battery.
         if (player.is_out_of_battery()) {

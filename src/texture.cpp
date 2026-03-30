@@ -2,6 +2,7 @@
 
 #include <exception>
 #include <format>
+#include <SDL3_image/SDL_image.h>
 
 #include "window.h"
 
@@ -20,6 +21,21 @@ void Texture::load_bmp(const char* path) {
         const auto e = std::format("Failed to load texture from `{}`", path);
         throw std::runtime_error(e);
     }
+
+    SDL_SetTextureScaleMode(data, SDL_SCALEMODE_NEAREST);
+}
+
+void Texture::load_png(const char* path) {
+    SDL_Surface* surface = SDL_LoadPNG(path);
+    data = SDL_CreateTextureFromSurface(gWindow.get_renderer(), surface);
+    SDL_DestroySurface(surface);
+
+    if (!data) {
+        const auto e = std::format("Failed to load texture from `{}`", path);
+        throw std::runtime_error(e);
+    }
+
+    SDL_SetTextureScaleMode(data, SDL_SCALEMODE_NEAREST);
 }
 
 void Texture::load_text(TTF_Font* font, const std::string& text) {

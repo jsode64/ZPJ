@@ -23,6 +23,12 @@ class Assets {
     /** The menu text. */
     Texture menuText;
 
+    /** The player sprite map. */
+    Texture player;
+
+    /** The coin sprite map. */
+    Texture coin;
+
     constexpr Assets() : font{nullptr}, jumpSound{}, coinCollectSound{}, menuText{} {}
 
     /** Loads the game assets. */

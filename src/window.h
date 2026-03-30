@@ -34,6 +34,9 @@ class Window {
     /** The window's height in pixels. */
     i32 h;
 
+    /** The number of frames processed. */
+    u32 nFrames;
+
     /** Is 'true` if the window should close (was closed, hit an error), `false`
      * if not. */
     bool shouldClose;
@@ -57,6 +60,9 @@ class Window {
 
     /** Returns a texture made from the given file path. */
     SDL_Texture* create_texture(const char* path);
+
+    /** Returns the number of frames processed since creation. */
+    u32 get_frames() const;
 
     /** Returns `true` if the window should close (was closed, hit an error),
      * `false` if not. */

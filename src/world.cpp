@@ -1,5 +1,6 @@
 #include "world.h"
 
+#include "assets.h"
 #include "player.h"
 #include "util.h"
 
@@ -142,6 +143,8 @@ void World::draw(const Player& player) const {
     }
 
     // Draw coins that are within the view.
+    const bool isFrame1 = gWindow.get_frames() % 60 >= 30;
+    const SDL_FRect coinSrc{isFrame1 ? 0.0f : 4.0f, 0.0f, 4.0f, 6.0f};
     SDL_FRect coinBody({}, {}, Coin::W, Coin::H);
     SDL_SetRenderDrawColor(renderer, 255, 225, 50, 255);
     for (const auto& coin : std::span(coins.data(), numCoins)) {
@@ -155,7 +158,7 @@ void World::draw(const Player& player) const {
 
         // Draw the coin relative to the view.
         const SDL_FRect dst(coinBody.x - view.x, coinBody.y - view.y, coinBody.w, coinBody.h);
-        SDL_RenderFillRect(renderer, &dst);
+        SDL_RenderTexture(renderer, gAssets.coin.get(), &coinSrc, &dst);
     }
 
     // Draw upgrades.

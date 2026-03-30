@@ -24,6 +24,9 @@ class Texture {
     /** Loads the texture from the given `.bmp` file. */
     void load_bmp(const char* path);
 
+    /** Loads the texture from the given `.png` file. */
+    void load_png(const char* path);
+
     /** Renders the given text. */
     void load_text(TTF_Font* font, const std::string& text);
 };

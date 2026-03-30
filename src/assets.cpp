@@ -15,4 +15,7 @@ void Assets::load_assets() {
     coinCollectSound.load("assets/coin.wav");
 
     menuText.load_text(font, "Press ENTER to continue!");
+    
+    player.load_png("assets/player.png");
+    coin.load_png("assets/coin.png");
 }
