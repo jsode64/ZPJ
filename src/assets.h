@@ -29,6 +29,9 @@ class Assets {
     /** The coin sprite map. */
     Texture coin;
 
+    /** The rock texture for platforms. */
+    Texture rock;
+
     constexpr Assets() : font{nullptr}, jumpSound{}, coinCollectSound{}, menuText{} {}
 
     /** Loads the game assets. */

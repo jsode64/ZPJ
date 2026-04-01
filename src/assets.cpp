@@ -18,4 +18,5 @@ void Assets::load_assets() {
     
     player.load_png("assets/player.png");
     coin.load_png("assets/coin.png");
+    rock.load_png("assets/rock.png");
 }
