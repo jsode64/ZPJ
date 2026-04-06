@@ -31,8 +31,26 @@ class Shop : public Menu {
     // Cost of upgrading the battery capacity.
     i32 batteryCapacityCost = 1;
 
+    // Number of times the battery capacity has been upgraded.
+    i32 batteryCapacityNum = 0;
+
     // Cost of upgrading the jump.
     i32 jumpUpgradeCost = 1;
+
+    // Number of times the jump has been upgraded.
+    i32 jumpUpgradeNum = 0;
+
+    // Cost of upgrading the speed.
+    i32 speedUpgradeCost = 1;
+
+    // Number of times the speed has been upgraded.
+    i32 speedUpgradeNum = 0;
+
+    // Cost of upgrading the battery efficiency.
+    i32 batteryEfficiencyCost = 5;
+
+    // Number of times the battery efficiency has been upgraded.
+    i32 batteryEfficiencyNum = 0;
 
   public:
     Shop(Game& game, Player& player);

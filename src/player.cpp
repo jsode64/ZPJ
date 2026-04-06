@@ -178,7 +178,7 @@ void Player::give_coins(const i32 _numCoins) { numCoins += _numCoins; }
 
 void Player::increase_battery_capacity() { batteryCapacity += 100; }
 
-void Player::increase_battery_efficiency() { batteryCost -= 2; }
+void Player::increase_battery_efficiency() { batteryCost -= 1; }
 
 void Player::increase_speed() {
     xSpeedMulti += 0.25f; 

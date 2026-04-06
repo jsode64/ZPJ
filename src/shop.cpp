@@ -15,18 +15,50 @@ Shop::Shop(Game& game, Player& player) : game{game}, player{player}, click(KEY_D
     const f32 Y = 150;
     const Button INCREASE_CAPACITY_BUTTON {
         {X, Y, BUTTON_W, BUTTON_H}, "INCREASE\nCAPACITY", [](Player& p, Game&, Shop& s) {
-            if (p.take_coins(s.batteryCapacityCost)) {
-                p.increase_battery_capacity();
-                s.batteryCapacityCost += 1;
+            if (s.batteryCapacityNum < 20) {  // Max of 20 upgrades
+                if (p.take_coins(s.batteryCapacityCost)) {
+                    p.increase_battery_capacity();
+                    s.batteryCapacityNum += 1;
+                    if (s.batteryCapacityNum % 2 == 0) {
+                        s.batteryCapacityCost += 1;
+                    }
+                }
             }
         }};
     const Button EXIT_SHOP_BUTTON {
-        {X + BUTTON_W + BUTTON_SPACING, Y, BUTTON_W, BUTTON_H}, "EXIT SHOP", [](Player&, Game& g, Shop&) { g.start_level(); }};
+        {X + (BUTTON_W + BUTTON_SPACING), Y, BUTTON_W, BUTTON_H}, "EXIT SHOP", [](Player&, Game& g, Shop&) { g.start_level(); }};
     const Button INCREASE_JUMP_BUTTON {
-        {X, Y + BUTTON_H + BUTTON_SPACING, BUTTON_W, BUTTON_H}, "INCREASE\nJUMP", [](Player& p, Game&, Shop& s) {
-            if (p.take_coins(s.jumpUpgradeCost)) {
-                p.increase_jump();
-                s.jumpUpgradeCost += 1;
+        {X, Y + (BUTTON_H + BUTTON_SPACING), BUTTON_W, BUTTON_H}, "INCREASE\nJUMP", [](Player& p, Game&, Shop& s) {
+            if (s.jumpUpgradeNum < 10) {  // Max of 10 upgrades
+                if (p.take_coins(s.jumpUpgradeCost)) {
+                    p.increase_jump();
+                    s.jumpUpgradeNum += 1;
+                    if (s.jumpUpgradeNum % 2 == 0) {
+                        s.jumpUpgradeCost *= 2;
+                    }
+                }
+            }
+        }};
+    const Button INCREASE_SPEED_BUTTON {
+        {X + (BUTTON_W + BUTTON_SPACING), Y + (BUTTON_H + BUTTON_SPACING), BUTTON_W, BUTTON_H}, "INCREASE\nSPEED", [](Player& p, Game&, Shop& s) {
+            if (s.speedUpgradeNum < 10) {  // Max of 10 upgrades
+                if (p.take_coins(s.speedUpgradeCost)) {
+                    p.increase_speed();
+                    s.speedUpgradeNum += 1;
+                    if (s.speedUpgradeNum % 2 == 0) {
+                        s.speedUpgradeCost *= 2;
+                    }
+                }
+            }
+        }};
+    const Button INCREASE_BATTERY_EFFICIENCY_BUTTON {
+        {X, Y + 2 * (BUTTON_H + BUTTON_SPACING), BUTTON_W, BUTTON_H}, "INCREASE\nBATTERY\nEFFICIENCY", [](Player& p, Game&, Shop& s) {
+            if (s.batteryEfficiencyNum < 5) {  // Max of 5 upgrades
+                if (p.take_coins(s.batteryEfficiencyCost)) {
+                    p.increase_battery_efficiency();
+                    s.batteryEfficiencyNum += 1;
+                    s.batteryEfficiencyCost *= 2;
+                }
             }
         }};
 
@@ -35,6 +67,8 @@ Shop::Shop(Game& game, Player& player) : game{game}, player{player}, click(KEY_D
         INCREASE_CAPACITY_BUTTON,
         EXIT_SHOP_BUTTON,
         INCREASE_JUMP_BUTTON,
+        INCREASE_SPEED_BUTTON,
+        INCREASE_BATTERY_EFFICIENCY_BUTTON,
     };
 }
 
