@@ -12,7 +12,7 @@
 Player::Player()
     : jumpKeyState(KEY_DOWN_SCANCODE(JUMP_KEY)), dashKeyState(KEY_DOWN_SCANCODE(DASH_KEY)), body{}, v{}, ground{},
       xSpeedMulti{1.0f}, xSpeed{BASE_X_SPEED * xSpeedMulti}, jumpSpeedMulti{0.0f}, jumpSpeed{BASE_JUMP_SPEED * jumpSpeedMulti},
-      batteryCapacity{1'000}, batteryCost{BASE_BATTERY_COST}, batteryRemaining{1'000},
+      dashSpeedMulti{2.0f}, dashSpeed{xSpeed * dashSpeedMulti}, batteryCapacity{1'000}, batteryCost{BASE_BATTERY_COST}, batteryRemaining{1'000},
       dashCooldown{0}, numCoins{1000}, hasDoubleJump{false}, isDoubleJumpUnlocked{false},
       isDashUnlocked{false}, coyoteTime{0} {
     init();
@@ -27,7 +27,7 @@ void Player::handle_input() {
 
     // Horizontal movement.
     const bool isDashing = dashKeyState.was_just_pressed() && isDashUnlocked && (dashCooldown < 0);
-    const f32 speed = isDashing ? DASH_SPEED : xSpeed;
+    const f32 speed = isDashing ? dashSpeed : xSpeed;
     if (keys[LEFT_KEY]) {
         v.x = -speed;
     } else if (keys[RIGHT_KEY]) {
@@ -183,11 +183,17 @@ void Player::increase_battery_efficiency() { batteryCost -= 1; }
 void Player::increase_speed() {
     xSpeedMulti += 0.25f; 
     xSpeed = BASE_X_SPEED * sqrt(xSpeedMulti);
+    dashSpeed = xSpeed * dashSpeedMulti;
 }
 
 void Player::increase_jump() {
     jumpSpeedMulti += 1.0f;
     jumpSpeed = BASE_JUMP_SPEED * sqrt(jumpSpeedMulti);
+}
+
+void Player::increase_dash_speed() {
+    dashSpeedMulti += 0.5f;
+    dashSpeed = xSpeed * dashSpeedMulti;
 }
 
 void Player::unlock_dash() { isDashUnlocked = true; }

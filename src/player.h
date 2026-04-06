@@ -23,9 +23,6 @@ class Player {
     /** The player's jump speed. */
     static constexpr f32 BASE_JUMP_SPEED = 5.0f;
 
-    /** The player's dash speed. */
-    static constexpr f32 DASH_SPEED = 30.0f;
-
     /** The base battery cost. */
     static constexpr i32 BASE_BATTERY_COST = 10;
 
@@ -73,6 +70,12 @@ class Player {
 
     /** Jump speed. */
     f32 jumpSpeed;
+
+    /** Dash speed multiplier. */
+    f32 dashSpeedMulti;
+
+    /** Dash speed. */
+    f32 dashSpeed;
 
     /** The player's battery capacity. */
     i32 batteryCapacity;
@@ -157,6 +160,9 @@ class Player {
 
     /** Increases the player's jump height. */
     void increase_jump();
+
+    /** Increases the player's dash speed. */
+    void increase_dash_speed();
 
     /** Unlocks the dash. */
     void unlock_dash();

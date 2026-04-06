@@ -61,6 +61,18 @@ Shop::Shop(Game& game, Player& player) : game{game}, player{player}, click(KEY_D
                 }
             }
         }};
+        const Button INCREASE_DASH_SPEED_BUTTON {
+        {X + (BUTTON_W + BUTTON_SPACING), Y + 2 * (BUTTON_H + BUTTON_SPACING), BUTTON_W, BUTTON_H}, "INCREASE\nDASH\nSPEED", [](Player& p, Game&, Shop& s) {
+            if (p.has_dash_unlocked()) {
+                if (s.dashSpeedUpgradeNum < 4) {  // Max of 4 upgrades
+                    if (p.take_coins(s.dashSpeedUpgradeCost)) {
+                        p.increase_dash_speed();
+                        s.dashSpeedUpgradeNum += 1;
+                        s.dashSpeedUpgradeCost *= 2;
+                    }
+                }
+            }
+        }};
 
     // Put in array.
     buttons = {
@@ -69,6 +81,7 @@ Shop::Shop(Game& game, Player& player) : game{game}, player{player}, click(KEY_D
         INCREASE_JUMP_BUTTON,
         INCREASE_SPEED_BUTTON,
         INCREASE_BATTERY_EFFICIENCY_BUTTON,
+        INCREASE_DASH_SPEED_BUTTON,
     };
 }
 

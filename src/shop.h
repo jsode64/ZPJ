@@ -46,6 +46,12 @@ class Shop : public Menu {
     // Number of times the speed has been upgraded.
     i32 speedUpgradeNum = 0;
 
+    // Cost of upgrading the dash speed.
+    i32 dashSpeedUpgradeCost = 8;
+
+    // Number of times the dash speed has been upgraded.
+    i32 dashSpeedUpgradeNum = 0;
+
     // Cost of upgrading the battery efficiency.
     i32 batteryEfficiencyCost = 5;
 
