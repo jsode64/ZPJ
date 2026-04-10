@@ -81,7 +81,8 @@ void World::init(const Player& player) {
     }
     */
 
-    doubleJumpUpgrade = Upgrade::double_jump(200.0f, 0.0f, !player.has_double_jump_unlocked());
+    doubleJumpUpgrade = Upgrade::double_jump(200.0f, -50.0f, !player.has_double_jump_unlocked());
+    dashUpgrade = Upgrade::dash_upgrade(300.0f, -50.0f, !player.has_dash_unlocked());
 }
 
 void World::update(Player& player) {
@@ -171,26 +172,25 @@ void World::draw(const Player& player) const {
     }
 
     // Draw upgrades.
+    const f32 slide = 8.f * std::sin(static_cast<f32>(SDL_GetTicks()) / 200.f);
     const auto doubleJumpBody = doubleJumpUpgrade.get_body();
     if (doubleJumpUpgrade.is_active() && do_rects_collide(view, doubleJumpBody)) {
         const SDL_FRect dst{
             doubleJumpBody.x - view.x,
-            doubleJumpBody.y - view.y,
+            doubleJumpBody.y - view.y + slide,
             doubleJumpBody.w,
             doubleJumpBody.h,
         };
-        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-        SDL_RenderFillRect(renderer, &dst);
+        SDL_RenderTexture(renderer, gAssets.doubleJump.get(), nullptr, &dst);
     }
-    const auto dahsBody = dashUpgrade.get_body();
-    if (dashUpgrade.is_active() && do_rects_collide(view, dahsBody)) {
+    const auto dashBody = dashUpgrade.get_body();
+    if (dashUpgrade.is_active() && do_rects_collide(view, dashBody)) {
         const SDL_FRect dst{
-            dahsBody.x - view.x,
-            dahsBody.y - view.y,
-            dahsBody.w,
-            dahsBody.h,
+            dashBody.x - view.x,
+            dashBody.y - view.y + slide,
+            dashBody.w,
+            dashBody.h,
         };
-        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-        SDL_RenderFillRect(renderer, &dst);
+        SDL_RenderTexture(renderer, gAssets.dash.get(), nullptr, &dst);
     }
 }

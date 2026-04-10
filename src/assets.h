@@ -32,6 +32,12 @@ class Assets {
     /** The rock texture for platforms. */
     Texture rock;
 
+    /** The double jump upgrade texture. */
+    Texture doubleJump;
+
+    /** The dash upgrade texture. */
+    Texture dash;
+
     constexpr Assets() : font{nullptr}, jumpSound{}, coinCollectSound{}, menuText{} {}
 
     /** Loads the game assets. */
