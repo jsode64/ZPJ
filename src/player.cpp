@@ -11,7 +11,7 @@
 
 Player::Player()
     : jumpKeyState(KEY_DOWN_SCANCODE(JUMP_KEY)), dashKeyState(KEY_DOWN_SCANCODE(DASH_KEY)), body{}, v{}, ground{},
-      xSpeed{BASE_X_SPEED}, jumpSpeed{BASE_JUMP_SPEED}, batteryCapacity{1'000'000}, batteryCost{BASE_BATTERY_COST},
+      xSpeed{BASE_X_SPEED}, jumpSpeed{BASE_JUMP_SPEED}, batteryCapacity{6000}, batteryCost{BASE_BATTERY_COST},
       batteryRemaining{1'000'000}, dashCooldown{0}, numCoins{0}, hasDoubleJump{false}, isDoubleJumpUnlocked{false},
       isDashUnlocked{false}, coyoteTime{0}, isFacingLeft{false} {
     init();
@@ -245,10 +245,15 @@ isFacingLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
 
     // Draw the battery meter.
     const f32 percentBattery = f32(batteryRemaining) / f32(batteryCapacity);
+    const f32 danger = 1.0f - percentBattery;
+    const f32 t = f32(gWindow.get_frames()) / 60.0f;
+    const f32 flashHz = 1.0f + (2.0f * danger * danger);
+    const f32 pulse = 0.5f + (0.5f * std::sin(6.2831853f * flashHz * t));
+    const f32 redAmount = std::clamp(danger * (0.35f + (0.65f * pulse)), 0.0f, 1.0f);
     const SDL_FRect meterLeftDst(0.0f, 0.0f, winW * percentBattery, 20.0f);
     const SDL_FRect meterRightDst(meterLeftDst.w, 0.0f, winW * (1.0f - percentBattery), 20.0f);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColorFloat(renderer, 1.0f, 1.0f - redAmount, 1.0f - redAmount, 1.0f);
     SDL_RenderFillRect(renderer, &meterLeftDst);
-    SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderFillRect(renderer, &meterRightDst);
 }
