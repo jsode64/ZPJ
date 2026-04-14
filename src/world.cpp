@@ -4,7 +4,8 @@
 #include "player.h"
 #include "util.h"
 
-World::World() : tiles{{}}, numTiles{0}, coins{}, numCoins{0}, dashUpgrade{}, doubleJumpUpgrade{} {}
+World::World()
+    : tiles{{}}, numTiles{0}, coins{}, numCoins{0}, fruits{{}}, numFruits{0}, dashUpgrade{}, doubleJumpUpgrade{} {}
 
 World::~World() {}
 
@@ -13,19 +14,17 @@ std::span<const Tile> World::get_tiles() const { return std::span(tiles.data(), 
 void World::init(const Player& player) {
     numTiles = 0;
     numCoins = 0;
+    numFruits = 0;
+    i32 it = 0;
 
-    // Tiles for the edge of the world
     push_tile({-2000.0f, 100.0f, 4000.0f, 50.0f});
     push_tile({-2000.0f, -1500.0f, 4000.0f, 50.0f});
     push_tile({-2050.0f, -1500.0f, 50.0f, 1650.0f});
     push_tile({2000.0f, -1500.0f, 50.0f, 1650.0f});
 
-    // Stage tiles
-    //
     push_tile({-50.0f, -75.0f, 150.0f, 50.0f});
     push_tile({100.0f, -175.0f, 50.0f, 150.0f});
 
-    // Staircase to the left
     push_tile({-150.0f, 75.0f, 75.0f, 25.0f});
     push_tile({-250.0f, 50.0f, 100.0f, 50.0f});
     push_tile({-550.0f, 25.0f, 300.0f, 75.0f});
@@ -37,7 +36,6 @@ void World::init(const Player& player) {
     push_tile({-1250.0f, -275.0f, 100.0f, 25.0f}, TILE_CYCLE(-1250.0f, -275.0f, -850.0f, -275.0f, 3.0f));
     push_tile({-1600.0f, -275.0f, 250.0f, 75.0f});
 
-    // Platforming challenge to the far left for the double jump upgrade
     push_tile({-1650.0f, -550.0f, 50.0f, 550.0f});
     push_tile({-2000.0f, -550.0f, 350.0f, 50.0f});
     push_tile({-2000.0f, 75.0f, 50.0f, 25.0f});
@@ -54,14 +52,12 @@ void World::init(const Player& player) {
     push_tile({-1935.0f, -400.0f, 225.0f, 25.0f});
     push_tile({-1835.0f, -500.0f, 25.0f, 125.0f});
 
-    // Staircase to the right
     push_tile({250.0f, 50.0f, 100.0f, 50.0f});
     push_tile({450.0f, 0.0f, 100.0f, 100.0f});
     push_tile({650.0f, -50.0f, 100.0f, 150.0f});
     push_tile({750.0f, 0.0f, 50.0f, 100.0f});
     push_tile({800.0f, 50.0f, 50.0f, 50.0f});
 
-    // Floating box staircase to the right
     push_tile({300.0f, -200.0f, 50.0f, 50.0f});
     push_tile({500.0f, -225.0f, 50.0f, 50.0f});
     push_tile({700.0f, -255.0f, 50.0f, 50.0f});
@@ -69,34 +65,38 @@ void World::init(const Player& player) {
 
     push_tile({1200.0f, -300.0f, 50.0f, 50.0f}, TILE_CYCLE(1200.0f, -300.0f, 1200.0f, -500.0f, 2.0f));
 
-    // The L shaped floating platform to the left
     push_tile({-300.0f, -175.0f, 150.0f, 50.0f});
     push_tile({-350.0f, -400.0f, 50.0f, 275.0f});
 
-    // The floating platforms accessible via the L shaped platform
     push_tile({-150.0f, -425.0f, 250.0f, 50.0f});
     push_tile({225.0f, -425.0f, 50.0f, 50.0f}, TILE_CYCLE(225.0f, -425.0f, 425.0f, -625.0f, 2.0f));
     push_tile({350.0f, -825.0f, 50.0f, 50.0f}, TILE_CYCLE(350.0f, -825.0f, 550.0f, -625.0f, 2.0f));
     push_tile({-50.0f, -825.0f, 250.0f, 50.0f});
 
-    // Coins to the right
+    // Coins
     push_coin({100.0f, 65.0f});
     push_coin({150.0f, 65.0f});
     push_coin({200.0f, 65.0f});
 
-    // A line of coins on platform to the left
+    // Fruits
+    push_fruit(Fruit(-200.0f, 150.0f, FruitType::Orange));
+    push_fruit(Fruit(-150.0f, 150.0f, FruitType::Pineapple));
+    push_fruit(Fruit(-100.0f, 150.0f, FruitType::Apple));
+    push_fruit(Fruit(-50.0f, 150.0f, FruitType::Blueberry));
+    push_fruit(Fruit(0.0f, 150.0f, FruitType::Strawberry));
+
     for (i32 i = 0; i < 5; i++) {
         push_coin({-510.0f + (i * 50.0f), -10.0f});
     }
 
     // A triangle of coins on the floating platform to the left
+    it = 1;
     for (i32 i = 0; i < 5; i++) {
         for (i32 j = 0; j < i + 1; j++) {
             push_coin({-1480.0f + (i * -15.0f) + (j * 30.0f), -430.0f + (i * 30.0f)});
         }
     }
 
-    // A square of coins in the platforming challenge to the far left
     for (i32 i = 0; i < 4; i++) {
         for (i32 j = 0; j < 3; j++) {
             push_coin({-1800.0f + (i * 20.0f), -485.0f + (j * 25.0f)});
@@ -129,15 +129,20 @@ void World::update(Player& player) {
 
     // Check for collected coins.
     for (auto& coin : std::span(coins.data(), numCoins)) {
-        const SDL_FRect coinBody{
-            coin.get_x(),
-            coin.get_y(),
-            Coin::W,
-            Coin::H,
-        };
+        const SDL_FRect coinBody{coin.get_x(), coin.get_y(), Coin::W, Coin::H};
         if (coin.is_active() && do_rects_collide(playerBody, coinBody)) {
             player.give_coins(1);
             coin.collect();
+        }
+    }
+
+    // Check for collected fruits.
+    for (auto& fruit : std::span(fruits.data(), numFruits)) {
+        fruit.update();
+        if (fruit.is_active() && do_rects_collide(playerBody, fruit.get_body())) {
+            player.give_coins(5);
+            fruit.collect();
+            gAssets.fruitPanel.collect(fruit.get_slot());
         }
     }
 
@@ -156,7 +161,6 @@ void World::draw(const Player& player) const {
     const f32 winW = f32(gWindow.get_width());
     const f32 winH = f32(gWindow.get_height());
 
-    // Calculate the camera's view.
     const SDL_FPoint playerCenter(playerBody.x + (playerBody.w / 2.0f), playerBody.y + (playerBody.h / 2.0f));
     const SDL_FRect view(playerCenter.x - (winW / 2.0f), playerCenter.y - (winH / 2.0f), winW, winH);
 
@@ -189,20 +193,35 @@ void World::draw(const Player& player) const {
     // Draw coins that are within the view.
     const bool isFrame1 = gWindow.get_frames() % 60 >= 30;
     const SDL_FRect coinSrc{isFrame1 ? 0.0f : 4.0f, 0.0f, 4.0f, 12.0f};
+    // Draw tiles.
+    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+    for (const auto& tile : std::span(tiles.data(), numTiles)) {
+        const auto body = tile.get_body();
+        if (!do_rects_collide(view, body))
+            continue;
+        const SDL_FRect dst(body.x - view.x, body.y - view.y, body.w, body.h);
+        SDL_RenderFillRect(renderer, &dst);
+    }
+
+    // Draw coins.
     SDL_FRect coinBody({}, {}, Coin::W, Coin::H);
     SDL_SetRenderDrawColor(renderer, 255, 225, 50, 255);
     for (const auto& coin : std::span(coins.data(), numCoins)) {
         coinBody.x = coin.get_x();
         coinBody.y = coin.get_y();
-
-        // Skip inactive coins or coins outside the view.
-        if (!coin.is_active() || !do_rects_collide(view, coinBody)) {
+        if (!coin.is_active() || !do_rects_collide(view, coinBody))
             continue;
-        }
-
-        // Draw the coin relative to the view.
         const SDL_FRect dst(coinBody.x - view.x, coinBody.y - view.y, coinBody.w, coinBody.h);
         SDL_RenderTexture(renderer, gAssets.coin.get(), &coinSrc, &dst);
+    }
+
+    // Draw fruits.
+    for (const auto& fruit : std::span(fruits.data(), numFruits)) {
+        const auto fruitBody = fruit.get_body();
+        if (!fruit.is_active() || !do_rects_collide(view, fruitBody))
+            continue;
+        const SDL_FRect dst{fruitBody.x - view.x, fruitBody.y - view.y + fruit.get_float_offset(), Fruit::W, Fruit::H};
+        SDL_RenderTexture(renderer, gAssets.get_fruit_frames(fruit.get_type())[fruit.get_frame()].get(), nullptr, &dst);
     }
 
     // Draw upgrades.
@@ -226,5 +245,14 @@ void World::draw(const Player& player) const {
             dashBody.h,
         };
         SDL_RenderTexture(renderer, gAssets.dash.get(), nullptr, &dst);
+        const SDL_FRect dst{doubleJumpBody.x - view.x, doubleJumpBody.y - view.y, doubleJumpBody.w, doubleJumpBody.h};
+        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        SDL_RenderFillRect(renderer, &dst);
+    }
+    const auto dashBody = dashUpgrade.get_body();
+    if (dashUpgrade.is_active() && do_rects_collide(view, dashBody)) {
+        const SDL_FRect dst{dashBody.x - view.x, dashBody.y - view.y, dashBody.w, dashBody.h};
+        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        SDL_RenderFillRect(renderer, &dst);
     }
 }

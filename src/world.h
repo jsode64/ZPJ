@@ -2,6 +2,7 @@
 
 #include "coin.h"
 #include "def.h"
+#include "fruit.h"
 #include "tile.h"
 #include "upgrades.h"
 #include "window.h"
@@ -26,6 +27,9 @@ class World {
     /** The world's collectables. */
     std::array<Coin, MAX_NUM_OBJS> coins;
 
+    std::array<Fruit, MAX_NUM_OBJS> fruits;
+    usize numFruits;
+
     /** The number of coins in the world. */
     usize numCoins;
 
@@ -49,6 +53,12 @@ class World {
 
         coins[numCoins] = coin;
         numCoins++;
+    }
+
+    constexpr void push_fruit(const Fruit fruit) {
+        assert(numFruits < MAX_NUM_OBJS);
+        fruits[numFruits] = fruit;
+        numFruits++;
     }
 
   public:

@@ -11,10 +11,10 @@
 
 Player::Player()
     : jumpKeyState(KEY_DOWN_SCANCODE(JUMP_KEY)), dashKeyState(KEY_DOWN_SCANCODE(DASH_KEY)), body{}, v{}, ground{},
-      xSpeedMulti{1.0f}, xSpeed{BASE_X_SPEED * xSpeedMulti}, jumpSpeedMulti{0.0f}, jumpSpeed{BASE_JUMP_SPEED * jumpSpeedMulti},
-      dashSpeedMulti{2.0f}, dashSpeed{xSpeed * dashSpeedMulti}, batteryCapacity{1'000}, batteryCost{BASE_BATTERY_COST}, batteryRemaining{1'000},
-      dashCooldown{0}, numCoins{1000}, hasDoubleJump{false}, isDoubleJumpUnlocked{false},
-      isDashUnlocked{false}, coyoteTime{0} {
+      xSpeedMulti{1.0f}, xSpeed{BASE_X_SPEED * xSpeedMulti}, jumpSpeedMulti{0.0f},
+      jumpSpeed{BASE_JUMP_SPEED * jumpSpeedMulti}, dashSpeedMulti{2.0f}, dashSpeed{xSpeed * dashSpeedMulti},
+      batteryCapacity{1'000}, batteryCost{BASE_BATTERY_COST}, batteryRemaining{1'000}, dashCooldown{0}, numCoins{1000},
+      hasDoubleJump{false}, isDoubleJumpUnlocked{false}, isDashUnlocked{false}, coyoteTime{0} {
     init();
 }
 
@@ -39,7 +39,8 @@ void Player::handle_input() {
     }
 
     // Vertical movement.
-    if (jumpKeyState.was_just_pressed() && (is_on_ground() || coyoteTime > 0 || (isDoubleJumpUnlocked && hasDoubleJump))) {
+    if (jumpKeyState.was_just_pressed() &&
+        (is_on_ground() || coyoteTime > 0 || (isDoubleJumpUnlocked && hasDoubleJump))) {
         v.y = -jumpSpeed;
         gMixer.play_sound(gAssets.jumpSound);
         hasDoubleJump = is_on_ground() || coyoteTime > 0;
@@ -193,7 +194,7 @@ void Player::increase_battery_capacity() { batteryCapacity += 100; }
 void Player::increase_battery_efficiency() { batteryCost -= 1; }
 
 void Player::increase_speed() {
-    xSpeedMulti += 0.25f; 
+    xSpeedMulti += 0.25f;
     xSpeed = BASE_X_SPEED * sqrt(xSpeedMulti);
     dashSpeed = xSpeed * dashSpeedMulti;
 }
@@ -257,16 +258,6 @@ void Player::draw() const {
 isFacingLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
 
     // Draw the battery meter.
-    const f32 percentBattery = f32(batteryRemaining) / f32(batteryCapacity);
-    const f32 danger = 1.0f - percentBattery;
-    const f32 t = f32(gWindow.get_frames()) / 60.0f;
-    const f32 flashHz = 1.0f + (2.0f * danger * danger);
-    const f32 pulse = 0.5f + (0.5f * std::sin(6.2831853f * flashHz * t));
-    const f32 redAmount = std::clamp(danger * (0.35f + (0.65f * pulse)), 0.0f, 1.0f);
-    const SDL_FRect meterLeftDst(0.0f, 0.0f, winW * percentBattery, 20.0f);
-    const SDL_FRect meterRightDst(meterLeftDst.w, 0.0f, winW * (1.0f - percentBattery), 20.0f);
-    SDL_SetRenderDrawColorFloat(renderer, 1.0f, 1.0f - redAmount, 1.0f - redAmount, 1.0f);
-    SDL_RenderFillRect(renderer, &meterLeftDst);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderFillRect(renderer, &meterRightDst);
+    gAssets.powerBar.draw(batteryRemaining, batteryCapacity);
+    gAssets.fruitPanel.draw();
 }

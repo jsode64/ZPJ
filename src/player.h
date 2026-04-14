@@ -24,7 +24,7 @@ class Player {
     static constexpr f32 BASE_JUMP_SPEED = 5.0f;
 
     /** The base battery cost. */
-    static constexpr i32 BASE_BATTERY_COST = 10;
+    static constexpr i32 BASE_BATTERY_COST = 1;
 
     /** The starting battery capacity before upgrades in ticks. */
     static constexpr i32 STARTING_BATTERY_CAPACITY = BASE_BATTERY_COST * 30;
