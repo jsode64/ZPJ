@@ -104,6 +104,12 @@ class Player {
     /** Does the player have the dash unlocked? */
     bool isDashUnlocked;
 
+    /** Is the player facing left? */
+    bool isFacingLeft;
+
+    /** Returns the texture coordinates the player should use. */
+    SDL_FPoint get_texture_coordinates() const;
+
     /** Handles user input for movement. */
     void handle_input();
 

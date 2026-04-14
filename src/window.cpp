@@ -6,7 +6,7 @@
 
 Window gWindow;
 
-Window::Window() : window{nullptr}, renderer{nullptr}, font{nullptr}, w{0}, h{0}, shouldClose{true} {}
+Window::Window() : window{nullptr}, renderer{nullptr}, font{nullptr}, w{0}, h{0}, nFrames{0}, shouldClose{true} {}
 
 Window::~Window() {
     TTF_CloseFont(font);
@@ -39,6 +39,10 @@ SDL_Texture* Window::create_texture(const char* path) {
     return texture;
 }
 
+u32 Window::get_frames() const {
+    return nFrames;
+}
+
 bool Window::should_close() const { return shouldClose; }
 
 void Window::update() {
@@ -57,6 +61,7 @@ void Window::update() {
 
     // Update info.
     SDL_GetWindowSizeInPixels(window, &w, &h);
+    nFrames++;
 }
 
 void Window::init() {
