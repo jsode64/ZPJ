@@ -1,5 +1,6 @@
 #include "world.h"
-
+#include <random>
+#include "assets.h"
 #include "player.h"
 #include "util.h"
 
@@ -12,7 +13,6 @@ std::span<const Tile> World::get_tiles() const { return std::span(tiles.data(), 
 void World::init(const Player& player) {
     numTiles = 0;
     numCoins = 0;
-    i32 it = 0;       // iterator for for loops
 
     // Tiles for the edge of the world
     push_tile({-2000.0f, 100.0f, 4000.0f, 50.0f});
@@ -90,12 +90,10 @@ void World::init(const Player& player) {
     }
 
     // A triangle of coins on the floating platform to the left
-    it = 1;
     for (i32 i = 0; i < 5; i++) {
-        for (i32 j = 0; j < it; j++) {
+        for (i32 j = 0; j < i + 1; j++) {
             push_coin({-1480.0f + (i * -15.0f) + (j * 30.0f), -430.0f + (i * 30.0f)});
         }
-        it++;
     }
 
     // A square of coins in the platforming challenge to the far left
@@ -116,8 +114,9 @@ void World::init(const Player& player) {
     }
     */
 
-    doubleJumpUpgrade = Upgrade::double_jump(-1900.0f, -460.0f, !player.has_double_jump_unlocked());
+    doubleJumpUpgrade = Upgrade::double_jump(-1900.0f, -5-460.0f, !player.has_double_jump_unlocked());
 
+    dashUpgrade = Upgrade::dash_upgrade(300.0f, -50.0f, !player.has_dash_unlocked());
 }
 
 void World::update(Player& player) {
@@ -162,20 +161,34 @@ void World::draw(const Player& player) const {
     const SDL_FRect view(playerCenter.x - (winW / 2.0f), playerCenter.y - (winH / 2.0f), winW, winH);
 
     // Draw tiles that are within the view.
-    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+    const auto rockTexture = gAssets.rock.get();
+    const u32 rockW = rockTexture->w;
+    const u32 rockH = rockTexture->h;
+    u32 i = 0;
     for (const auto& tile : std::span(tiles.data(), numTiles)) {
+        i++;
+
         // Skip tiles that can't be seen.
-        const auto body = tile.get_body();
-        if (!do_rects_collide(view, body)) {
+        const auto tileBody = tile.get_body();
+        if (!do_rects_collide(view, tileBody)) {
             continue;
         }
 
         // Draw the tile relative to the view.
-        const SDL_FRect dst(body.x - view.x, body.y - view.y, body.w, body.h);
-        SDL_RenderFillRect(renderer, &dst);
+        std::minstd_rand rng{i};
+        const SDL_FRect src{
+            std::uniform_real_distribution<f32>(0.0f, static_cast<f32>(rockW) - (tileBody.w / 4.0f))(rng),
+            std::uniform_real_distribution<f32>(0.0f, static_cast<f32>(rockH) - (tileBody.h / 4.0f))(rng),
+            tileBody.w / 4.0f,
+            tileBody.h / 4.0f,
+        };
+        const SDL_FRect dst{tileBody.x - view.x, tileBody.y - view.y, tileBody.w, tileBody.h};
+        SDL_RenderTexture(renderer, rockTexture, &src, &dst);
     }
 
     // Draw coins that are within the view.
+    const bool isFrame1 = gWindow.get_frames() % 60 >= 30;
+    const SDL_FRect coinSrc{isFrame1 ? 0.0f : 4.0f, 0.0f, 4.0f, 12.0f};
     SDL_FRect coinBody({}, {}, Coin::W, Coin::H);
     SDL_SetRenderDrawColor(renderer, 255, 225, 50, 255);
     for (const auto& coin : std::span(coins.data(), numCoins)) {
@@ -189,30 +202,29 @@ void World::draw(const Player& player) const {
 
         // Draw the coin relative to the view.
         const SDL_FRect dst(coinBody.x - view.x, coinBody.y - view.y, coinBody.w, coinBody.h);
-        SDL_RenderFillRect(renderer, &dst);
+        SDL_RenderTexture(renderer, gAssets.coin.get(), &coinSrc, &dst);
     }
 
     // Draw upgrades.
+    const f32 slide = 8.f * std::sin(static_cast<f32>(SDL_GetTicks()) / 200.f);
     const auto doubleJumpBody = doubleJumpUpgrade.get_body();
     if (doubleJumpUpgrade.is_active() && do_rects_collide(view, doubleJumpBody)) {
         const SDL_FRect dst{
             doubleJumpBody.x - view.x,
-            doubleJumpBody.y - view.y,
+            doubleJumpBody.y - view.y + slide,
             doubleJumpBody.w,
             doubleJumpBody.h,
         };
-        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-        SDL_RenderFillRect(renderer, &dst);
+        SDL_RenderTexture(renderer, gAssets.doubleJump.get(), nullptr, &dst);
     }
-    const auto dahsBody = dashUpgrade.get_body();
-    if (dashUpgrade.is_active() && do_rects_collide(view, dahsBody)) {
+    const auto dashBody = dashUpgrade.get_body();
+    if (dashUpgrade.is_active() && do_rects_collide(view, dashBody)) {
         const SDL_FRect dst{
-            dahsBody.x - view.x,
-            dahsBody.y - view.y,
-            dahsBody.w,
-            dahsBody.h,
+            dashBody.x - view.x,
+            dashBody.y - view.y + slide,
+            dashBody.w,
+            dashBody.h,
         };
-        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-        SDL_RenderFillRect(renderer, &dst);
+        SDL_RenderTexture(renderer, gAssets.dash.get(), nullptr, &dst);
     }
 }
