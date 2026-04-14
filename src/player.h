@@ -80,6 +80,9 @@ class Player {
     /** The player's battery capacity. */
     i32 batteryCapacity;
 
+    /** The amount the battery capacity increases with each upgrade. */
+    i32 batteryCapacityIncrease;
+
     /** The amount of battery lost each frame. */
     i32 batteryCost;
 
@@ -151,6 +154,9 @@ class Player {
 
     /** Increases the player's battery capacity. */
     void increase_battery_capacity();
+
+    /** Increases the player's battery capacity upgrade (doubles the increase). */
+    void increase_battery_capacity_upgrade();
 
     /** Increases the player's battery efficiency. */
     void increase_battery_efficiency();

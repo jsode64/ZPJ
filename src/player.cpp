@@ -12,7 +12,8 @@
 Player::Player()
     : jumpKeyState(KEY_DOWN_SCANCODE(JUMP_KEY)), dashKeyState(KEY_DOWN_SCANCODE(DASH_KEY)), body{}, v{}, ground{},
       xSpeedMulti{1.0f}, xSpeed{BASE_X_SPEED * xSpeedMulti}, jumpSpeedMulti{0.0f}, jumpSpeed{BASE_JUMP_SPEED * jumpSpeedMulti},
-      dashSpeedMulti{2.0f}, dashSpeed{xSpeed * dashSpeedMulti}, batteryCapacity{1'000}, batteryCost{BASE_BATTERY_COST}, batteryRemaining{1'000},
+      dashSpeedMulti{2.0f}, dashSpeed{xSpeed * dashSpeedMulti},
+      batteryCapacity{1'000}, batteryCapacityIncrease{100}, batteryCost{BASE_BATTERY_COST}, batteryRemaining{1'000},
       dashCooldown{0}, numCoins{1000}, hasDoubleJump{false}, isDoubleJumpUnlocked{false},
       isDashUnlocked{false}, coyoteTime{0} {
     init();
@@ -176,7 +177,12 @@ bool Player::take_coins(i32 cost) {
 
 void Player::give_coins(const i32 _numCoins) { numCoins += _numCoins; }
 
-void Player::increase_battery_capacity() { batteryCapacity += 100; }
+void Player::increase_battery_capacity() { batteryCapacity += batteryCapacityIncrease; }
+
+void Player::increase_battery_capacity_upgrade() {
+    batteryCapacityIncrease *= 1.5f;
+    batteryCapacityIncrease -= batteryCapacityIncrease % 10;  // Round to nearest 10 for cleaner numbers.
+}
 
 void Player::increase_battery_efficiency() { batteryCost -= 1; }
 
