@@ -9,10 +9,19 @@ Texture::Texture(const char* path) : Texture{} { load_bmp(path); }
 
 Texture::~Texture() { SDL_DestroyTexture(data); }
 
-SDL_Texture* Texture::get() { return data; }
+SDL_Texture* Texture::get() const { return data; }
 
 void Texture::load_bmp(const char* path) {
     SDL_Surface* surface = SDL_LoadBMP(path);
+
+    if (!surface) {
+        const auto e = std::format("Failed to load surface from `{}`: {}", path, SDL_GetError());
+        throw std::runtime_error(e);
+    }
+
+    // Make black transparent.
+    SDL_SetSurfaceColorKey(surface, true, SDL_MapRGB(SDL_GetPixelFormatDetails(surface->format), nullptr, 0, 0, 0));
+
     data = SDL_CreateTextureFromSurface(gWindow.get_renderer(), surface);
     SDL_DestroySurface(surface);
 

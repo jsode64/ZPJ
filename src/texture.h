@@ -19,7 +19,7 @@ class Texture {
     ~Texture();
 
     /** Returns a handle to the texture. */
-    SDL_Texture* get();
+    SDL_Texture* get() const;
 
     /** Loads the texture from the given `.bmp` file. */
     void load_bmp(const char* path);
