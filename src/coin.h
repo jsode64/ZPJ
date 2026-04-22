@@ -1,7 +1,5 @@
 #pragma once
 
-#include <SDL3/SDL.h>
-
 #include "def.h"
 
 class Coin {
@@ -12,8 +10,7 @@ class Coin {
     /** The coin's y-position. */
     f32 y;
 
-    /** Is `true` if the coin is active (was initialized and hasn'e been
-     * collected), `false` if not. */
+    /** Whether the coin is active (not collected). */
     bool isActive;
 
   public:

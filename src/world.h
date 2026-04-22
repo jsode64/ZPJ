@@ -2,6 +2,7 @@
 
 #include "coin.h"
 #include "def.h"
+#include "fruit.h"
 #include "tile.h"
 #include "upgrades.h"
 #include "window.h"
@@ -23,11 +24,14 @@ class World {
     /** The number of tiles in the world. */
     usize numTiles;
 
-    /** The world's collectables. */
+    /** The world's coins. */
     std::array<Coin, MAX_NUM_OBJS> coins;
 
     /** The number of coins in the world. */
     usize numCoins;
+
+    /** The world's fruit. */
+    std::array<Fruit, 5> fruits;
 
     /** The dash upgrade. */
     Upgrade dashUpgrade;

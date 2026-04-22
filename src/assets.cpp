@@ -21,4 +21,5 @@ void Assets::load_assets() {
     rock.load_png("assets/rock.png");
     doubleJump.load_png("assets/doublejump.png");
     dash.load_png("assets/dash.png");
+    fruit.load_png("assets/fruit.png");
 }
