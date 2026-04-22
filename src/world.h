@@ -43,6 +43,15 @@ class World {
         numTiles++;
     }
 
+    /** Asserts that there's room for the damage tile and pushes it to the world. */
+    constexpr void push_damage_tile(const SDL_FRect body, Tile::UpdateFn updateFn = nullptr) {
+        assert(numTiles < MAX_NUM_OBJS);
+
+        tiles[numTiles] = Tile(body, updateFn);
+        tiles[numTiles].set_damageable(true);
+        numTiles++;
+    }
+
     /** Asserts that there's room for the coin and pushes it to the world. */
     constexpr void push_coin(const Coin coin) {
         assert(numCoins < MAX_NUM_OBJS);

@@ -98,6 +98,9 @@ class Player {
     /** The coyote timing remaining. */
     i32 coyoteTime;
 
+    /** Cooldown for taking damage from damageable tiles. */
+    i32 damagableCooldown;
+
     /** Has the player double jumped since last on the ground? */
     bool hasDoubleJump;
 
@@ -150,6 +153,9 @@ class Player {
 
     /** Is the player out of battery? */
     bool is_out_of_battery() const;
+
+    /** Reduces the player's battery. */
+    void take_damage();
 
     /** Removes the given number of coins from the player, returning `true` if they had that many
      * coins, `false` if not. */

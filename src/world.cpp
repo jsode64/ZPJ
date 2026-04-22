@@ -13,6 +13,13 @@ std::span<const Tile> World::get_tiles() const { return std::span(tiles.data(), 
 void World::init(const Player& player) {
     numTiles = 0;
     numCoins = 0;
+    
+    // If push_damage_tile is called later, any tiles previously added with push_tile
+    // will become damageable for unknown reasons
+    // Initialize damage tiles here or find the issue and fix it
+
+    // push_damage_tile({350.0f, 0.0f, 50.0f, 50.0f});    
+
 
     // Tiles for the edge of the world
     push_tile({-2000.0f, 100.0f, 4000.0f, 50.0f});
@@ -66,8 +73,12 @@ void World::init(const Player& player) {
     push_tile({500.0f, -225.0f, 50.0f, 50.0f});
     push_tile({700.0f, -255.0f, 50.0f, 50.0f});
     push_tile({900.0f, -300.0f, 200.0f, 50.0f});
-
     push_tile({1200.0f, -300.0f, 50.0f, 50.0f}, TILE_CYCLE(1200.0f, -300.0f, 1200.0f, -500.0f, 2.0f));
+    push_tile({1600.0f, -500.0f, 50.0f, 50.0f}, TILE_CYCLE(1600.0f, -700.0f, 1325.0f, -500.0f, 2.0f));
+
+    // Platforming challenge to the right for the dash upgrade
+    push_tile({1750.0f, -700.0f, 250.0f, 50.0f});
+    push_tile({1750.0f, -1450.0f, 50.0f, 600.0f});
 
     // The L shaped floating platform to the left
     push_tile({-300.0f, -175.0f, 150.0f, 50.0f});
@@ -115,7 +126,6 @@ void World::init(const Player& player) {
     */
 
     doubleJumpUpgrade = Upgrade::double_jump(-1900.0f, -5-460.0f, !player.has_double_jump_unlocked());
-
     dashUpgrade = Upgrade::dash_upgrade(300.0f, -50.0f, !player.has_dash_unlocked());
 }
 
@@ -175,15 +185,23 @@ void World::draw(const Player& player) const {
         }
 
         // Draw the tile relative to the view.
-        std::minstd_rand rng{i};
-        const SDL_FRect src{
-            std::uniform_real_distribution<f32>(0.0f, static_cast<f32>(rockW) - (tileBody.w / 4.0f))(rng),
-            std::uniform_real_distribution<f32>(0.0f, static_cast<f32>(rockH) - (tileBody.h / 4.0f))(rng),
-            tileBody.w / 4.0f,
-            tileBody.h / 4.0f,
-        };
         const SDL_FRect dst{tileBody.x - view.x, tileBody.y - view.y, tileBody.w, tileBody.h};
-        SDL_RenderTexture(renderer, rockTexture, &src, &dst);
+
+        if (tile.is_damageable()) {
+            // Draw damageable tiles as solid red rectangles
+            SDL_SetRenderDrawColor(renderer, 255, 50, 50, 255);  // Dark red color
+            SDL_RenderFillRect(renderer, &dst);
+        } else {
+            // Draw normal tiles with rock texture
+            std::minstd_rand rng{i};
+            const SDL_FRect src{
+                std::uniform_real_distribution<f32>(0.0f, static_cast<f32>(rockW) - (tileBody.w / 4.0f))(rng),
+                std::uniform_real_distribution<f32>(0.0f, static_cast<f32>(rockH) - (tileBody.h / 4.0f))(rng),
+                tileBody.w / 4.0f,
+                tileBody.h / 4.0f,
+            };
+            SDL_RenderTexture(renderer, rockTexture, &src, &dst);
+        }
     }
 
     // Draw coins that are within the view.
