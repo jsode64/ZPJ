@@ -1,7 +1,7 @@
 #include "player.h"
 
 #include <algorithm>
-#include <print>
+#include <exception>
 #include "assets.h"
 #include "coin.h"
 #include "config.h"
@@ -47,6 +47,12 @@ void Player::handle_input() {
         coyoteTime = 0;
     }
     v.y += GRAVITY;
+}
+
+void Player::handle_completion(const World& world) {
+    if (world.are_fruits_collected() && do_rects_collide(body, World::DOOR)) {
+        std::terminate();
+    }
 }
 
 void Player::handle_movement(const World& world) {
@@ -233,6 +239,7 @@ void Player::init() {
 
 void Player::update(World& world) {
     handle_input();
+    handle_completion(world);
     handle_movement(world);
 
     batteryRemaining -= batteryCost;

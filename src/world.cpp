@@ -10,6 +10,15 @@ World::~World() {}
 
 std::span<const Tile> World::get_tiles() const { return std::span(tiles.data(), numTiles); }
 
+bool World::are_fruits_collected() const {
+    for (const auto& fruit: fruits) {
+        if (fruit.is_active()) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void World::init(const Player& player) {
     numTiles = 0;
     numCoins = 0;
@@ -181,6 +190,18 @@ void World::draw(const Player& player) const {
     // Calculate the camera's view.
     const SDL_FPoint playerCenter(playerBody.x + (playerBody.w / 2.0f), playerBody.y + (playerBody.h / 2.0f));
     const SDL_FRect view(playerCenter.x - (winW / 2.0f), playerCenter.y - (winH / 2.0f), winW, winH);
+
+    // Draw the door.
+    if (do_rects_collide(DOOR, view)) {
+        const SDL_FRect dst{
+            DOOR.x - view.x,
+            DOOR.y - view.y,
+            DOOR.w,
+            DOOR.h,
+        };
+        SDL_SetRenderDrawColor(renderer, 75, 50, 50, 255);
+        SDL_RenderFillRect(renderer, &dst);
+    }
 
     // Draw tiles that are within the view.
     const auto rockTexture = gAssets.rock.get();

@@ -14,7 +14,7 @@
 class Player;
 
 class World {
-  private:
+private:
     /** The maximum number of objects that can be in a world. */
     static constexpr usize MAX_NUM_OBJS = 1024;
 
@@ -55,13 +55,19 @@ class World {
         numCoins++;
     }
 
-  public:
+public:
+    /** The exit door. */
+    static constexpr SDL_FRect DOOR{0, 0, 45, 80};
+
     World();
 
     ~World();
 
     /** Returns a span of all tiles. */
     std::span<const Tile> get_tiles() const;
+
+    /** Returns whether the fruits are all collected. */
+    bool are_fruits_collected() const;
 
     /** Initializes the world. */
     void init(const Player& player);
