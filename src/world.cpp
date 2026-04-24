@@ -1,6 +1,5 @@
 #include "world.h"
 #include <random>
-#include <print>
 #include "assets.h"
 #include "player.h"
 #include "util.h"
@@ -191,7 +190,6 @@ void World::draw(const Player& player) const {
         const SDL_FRect dst{tileBody.x - view.x, tileBody.y - view.y, tileBody.w, tileBody.h};
 
         if (tile.is_damageable()) {
-            std::println("{} is damage", i);
             // Draw damageable tiles as solid red rectangles
             SDL_SetRenderDrawColor(renderer, 255, 50, 50, 255);  // Dark red color
             SDL_RenderFillRect(renderer, &dst);
