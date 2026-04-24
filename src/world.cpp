@@ -27,6 +27,8 @@ void World::init(const Player& player) {
     push_tile({-2050.0f, -1500.0f, 50.0f, 1650.0f});
     push_tile({2000.0f, -1500.0f, 50.0f, 1650.0f});
 
+    push_damage_tile({350.0f, 0.0f, 50.0f, 50.0f});
+
     // Stage tiles
     //
     push_tile({-50.0f, -75.0f, 150.0f, 50.0f});
