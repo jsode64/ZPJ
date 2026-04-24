@@ -28,7 +28,7 @@ class Tile {
   public:
     constexpr Tile() : body{{}}, v{{}}, updateFn{nullptr}, damageable{false}, damagableCooldown{0} {}
 
-    constexpr Tile(SDL_FRect body, UpdateFn updateFn) : body{body}, v{{}}, updateFn{updateFn}, damageable{false}, damagableCooldown{0} {}
+    constexpr Tile(SDL_FRect body, UpdateFn updateFn, bool damageable) : body{body}, v{{}}, updateFn{updateFn}, damageable{damageable}, damagableCooldown{0} {}
 
     /** Returns the tile's update function. */
     UpdateFn get_update_fn() const;

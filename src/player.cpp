@@ -72,8 +72,10 @@ void Player::handle_movement(const World& world) {
         const auto tileV = tile.get_v();
         auto testBody = SDL_FRect{x, body.y, body.w, body.h};
         auto pre = tileBody;
+        bool hit = false;
         pre.y -= tileV.y;
         if (do_rects_collide(testBody, tileBody) && do_rects_collide(testBody, pre)) {
+            hit = true;
             if (v.x > 0.0f) {
                 if (tileV.x > v.x) {
                     // Both moving right, tile faster:
@@ -111,6 +113,7 @@ void Player::handle_movement(const World& world) {
         // Vertical collision check.
         testBody = SDL_FRect{x, y, body.w, body.h};
         if (do_rects_collide(testBody, tileBody)) {
+            hit = true;
             if (v.y >= 0.0f) {
                 y = tileBody.y - body.h;
 
@@ -126,7 +129,7 @@ void Player::handle_movement(const World& world) {
         }
 
         // Check if touching a damageable tile.
-        if (tile.is_damageable() && (hitUp || hitDown || hitLeft || hitRight) && damagableCooldown <= 0) {
+        if (tile.is_damageable() && hit && damagableCooldown <= 0) {
             take_damage();
             tile.reset_damage_cooldown();
             damagableCooldown = 30;  // Player-side cooldown to prevent rapid damage
