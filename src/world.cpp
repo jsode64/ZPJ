@@ -13,21 +13,18 @@ std::span<const Tile> World::get_tiles() const { return std::span(tiles.data(), 
 void World::init(const Player& player) {
     numTiles = 0;
     numCoins = 0;
-    
-    // If push_damage_tile is called later, any tiles previously added with push_tile
-    // will become damageable for unknown reasons
-    // Initialize damage tiles here or find the issue and fix it
-
-    // push_damage_tile({350.0f, 0.0f, 50.0f, 50.0f});    
-
+    // Damage tiles for the true edge of the world
+    // (in case the player clips out of the level)
+    push_damage_tile({-3000.0f, 600.0f, 6000.0f, 50.0f});
+    push_damage_tile({-3000.0f, -2000.0f, 6000.0f, 50.0f});
+    push_damage_tile({-3050.0f, -2000.0f, 50.0f, 2650.0f});
+    push_damage_tile({3000.0f, -2000.0f, 50.0f, 2650.0f});
 
     // Tiles for the edge of the world
     push_tile({-2000.0f, 100.0f, 4000.0f, 50.0f});
     push_tile({-2000.0f, -1500.0f, 4000.0f, 50.0f});
     push_tile({-2050.0f, -1500.0f, 50.0f, 1650.0f});
     push_tile({2000.0f, -1500.0f, 50.0f, 1650.0f});
-
-    push_damage_tile({350.0f, 0.0f, 50.0f, 50.0f});
 
     // Stage tiles
     //
@@ -69,6 +66,15 @@ void World::init(const Player& player) {
     push_tile({650.0f, -50.0f, 100.0f, 150.0f});
     push_tile({750.0f, 0.0f, 50.0f, 100.0f});
     push_tile({800.0f, 50.0f, 50.0f, 50.0f});
+    push_damage_tile({850.0f, 85.0f, 1150.0f, 15.0f});
+
+    // Platforming challenge to the far right down
+    push_tile({925.0f, 25.0f, 100.0f, 25.0f}, TILE_CYCLE(925.0f, 25.0f, 1325.0f, 25.0f, 5.0f));
+    push_tile({1875.0f, 25.0f, 100.0f, 25.0f}, TILE_CYCLE(1875.0f, 25.0f, 1450.0f, 25.0f, 5.0f));
+    push_damage_tile({1050.0f, -130.0f, 25.0f, 50.0f}, TILE_CYCLE(1050.0f, -130.0f, 1050.0f, -30.0f, 1.5f));
+    push_damage_tile({1200.0f, -30.0f, 25.0f, 50.0f}, TILE_CYCLE(1200.0f, -30.0f, 1200.0f, -130.0f, 1.5f));
+    push_damage_tile({1300.0f, -15.0f, 25.0f, 25.0f});
+    push_damage_tile({1425.0f, -150.0f, 25.0f, 120.0f});
 
     // Floating box staircase to the right
     push_tile({300.0f, -200.0f, 50.0f, 50.0f});
@@ -78,7 +84,7 @@ void World::init(const Player& player) {
     push_tile({1200.0f, -300.0f, 50.0f, 50.0f}, TILE_CYCLE(1200.0f, -300.0f, 1200.0f, -500.0f, 2.0f));
     push_tile({1600.0f, -500.0f, 50.0f, 50.0f}, TILE_CYCLE(1600.0f, -700.0f, 1325.0f, -500.0f, 2.0f));
 
-    // Platforming challenge to the right for the dash upgrade
+    // Platforming challenge to the far right up for the dash upgrade
     push_tile({1750.0f, -700.0f, 250.0f, 50.0f});
     push_tile({1750.0f, -1450.0f, 50.0f, 600.0f});
 
