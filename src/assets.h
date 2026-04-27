@@ -32,6 +32,9 @@ class Assets {
     /** The rock texture for platforms. */
     Texture rock;
 
+    /** The grass texture for platforms. */
+    Texture grass;
+
     /** The double jump upgrade texture. */
     Texture doubleJump;
 
