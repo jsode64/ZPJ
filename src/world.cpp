@@ -36,7 +36,7 @@ void World::init(const Player& player) {
     push_tile({2000.0f, -1500.0f, 50.0f, 1650.0f});
 
     // Stage tiles
-    //
+    // it's those tiles!!
     push_tile({-50.0f, -75.0f, 150.0f, 50.0f});
     push_tile({100.0f, -175.0f, 50.0f, 150.0f});
 
@@ -93,13 +93,16 @@ void World::init(const Player& player) {
     push_tile({1200.0f, -300.0f, 50.0f, 50.0f}, TILE_CYCLE(1200.0f, -300.0f, 1200.0f, -500.0f, 2.0f));
     push_tile({1600.0f, -500.0f, 50.0f, 50.0f}, TILE_CYCLE(1600.0f, -700.0f, 1325.0f, -500.0f, 2.0f));
 
-    // Platforming challenge to the far right up for the dash upgrade
+    // Platforming challenge to the far right up for the dash upgrade (?)
     push_tile({1750.0f, -700.0f, 50.0f, 50.0f});
     push_tile({1800.0f, -675.0f, 200.0f, 25.0f});
     push_tile({1750.0f, -1450.0f, 50.0f, 600.0f});
     push_damage_tile({1800.0f, -875.0f, 100.0f, 25.0f});
     push_damage_tile({1900.0f, -1000.0f, 100.0f, 25.0f});
-    push_tile({1800.0f, -700.0f, 200.0f, 25.0f}, TILE_CYCLE(1800.0f, -700.0f, 1800.0f, -1325.0f, 6.0f));
+    push_damage_tile({1800.0f, -1325.0f, 25.0f, 225.0f});
+    push_damage_tile({1825.0f, -1125.0f, 75.0f, 25.0f});
+    push_damage_tile({1975.0f, -1325.0f, 25.0f, 325.0f});
+    push_tile({1800.0f, -699.0f, 200.0f, 25.0f}, TILE_CYCLE(1800.0f, -699.0f, 1800.0f, -1325.0f, 6.0f));
 
     // The L shaped floating platform to the left
     push_tile({-300.0f, -175.0f, 150.0f, 50.0f});
@@ -284,7 +287,7 @@ void World::draw(const Player& player) const {
         fruitBody.x = fruit.get_x() - (pulse / 2.0f);
         fruitBody.y = fruit.get_y() - (pulse / 2.0f);
 
-        if (!fruit.is_active() || !do_rects_collide(view, coinBody)) {
+        if (!fruit.is_active() || !do_rects_collide(view, fruitBody)) {
             continue;
         }
 
