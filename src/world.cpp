@@ -4,11 +4,20 @@
 #include "player.h"
 #include "util.h"
 
-World::World() : tiles{{}}, numTiles{0}, coins{}, numCoins{0}, dashUpgrade{}, doubleJumpUpgrade{} {}
+World::World() : tiles{{}}, numTiles{0}, coins{}, numCoins{0}, fruits{}, dashUpgrade{}, doubleJumpUpgrade{} {}
 
 World::~World() {}
 
 std::span<const Tile> World::get_tiles() const { return std::span(tiles.data(), numTiles); }
+
+bool World::are_fruits_collected() const {
+    for (const auto& fruit: fruits) {
+        if (fruit.is_active()) {
+            return false;
+        }
+    }
+    return true;
+}
 
 void World::init(const Player& player) {
     numTiles = 0;
@@ -137,7 +146,17 @@ void World::init(const Player& player) {
     }
     */
 
-    doubleJumpUpgrade = Upgrade::double_jump(-1900.0f, -5-460.0f, !player.has_double_jump_unlocked());
+    // Place fruit.
+    fruits = {
+        Fruit(350.0f, -50.0f, fruits[0].is_active()),
+        Fruit(390.0f, -50.0f, fruits[1].is_active()),
+        Fruit(430.0f, -50.0f, fruits[2].is_active()),
+        Fruit(470.0f, -50.0f, fruits[3].is_active()),
+        Fruit(510.0f, -50.0f, fruits[4].is_active()),
+    };
+
+    // Place upgrades.
+    doubleJumpUpgrade = Upgrade::double_jump(-1900.0f, -460.0f, !player.has_double_jump_unlocked());
     dashUpgrade = Upgrade::dash_upgrade(300.0f, -50.0f, !player.has_dash_unlocked());
 }
 
@@ -163,6 +182,19 @@ void World::update(Player& player) {
         }
     }
 
+    // Check for collected fruit.
+    for (auto& fruit: fruits) {
+        const SDL_FRect fruitBody{
+            fruit.get_x(),
+            fruit.get_y(),
+            Fruit::W,
+            Fruit::H,
+        };
+        if (fruit.is_active() && do_rects_collide(playerBody, fruitBody)) {
+            fruit.collect();
+        }
+    }
+
     // Check for collected upgrades.
     if (doubleJumpUpgrade.is_active() && do_rects_collide(playerBody, doubleJumpUpgrade.get_body())) {
         doubleJumpUpgrade.collect(player);
@@ -181,6 +213,18 @@ void World::draw(const Player& player) const {
     // Calculate the camera's view.
     const SDL_FPoint playerCenter(playerBody.x + (playerBody.w / 2.0f), playerBody.y + (playerBody.h / 2.0f));
     const SDL_FRect view(playerCenter.x - (winW / 2.0f), playerCenter.y - (winH / 2.0f), winW, winH);
+
+    // Draw the door.
+    if (do_rects_collide(DOOR, view)) {
+        const SDL_FRect dst{
+            DOOR.x - view.x,
+            DOOR.y - view.y,
+            DOOR.w,
+            DOOR.h,
+        };
+        SDL_SetRenderDrawColor(renderer, 75, 50, 50, 255);
+        SDL_RenderFillRect(renderer, &dst);
+    }
 
     // Draw tiles that are within the view.
     const auto grassTexture = gAssets.grass.get();
@@ -230,6 +274,23 @@ void World::draw(const Player& player) const {
         // Draw the coin relative to the view.
         const SDL_FRect dst(coinBody.x - view.x, coinBody.y - view.y, coinBody.w, coinBody.h);
         SDL_RenderTexture(renderer, gAssets.coin.get(), &coinSrc, &dst);
+    }
+
+    // Draw the fruit.
+    const f32 pulse = 8.0f * std::sin(static_cast<f32>(gWindow.get_frames()) / 15.0f);
+    SDL_FRect fruitBody{{}, {}, Fruit::W + pulse, Fruit::H + pulse};
+    for (usize i = 0; i < fruits.size(); i++) {
+        const Fruit& fruit = fruits[i];
+        fruitBody.x = fruit.get_x() - (pulse / 2.0f);
+        fruitBody.y = fruit.get_y() - (pulse / 2.0f);
+
+        if (!fruit.is_active() || !do_rects_collide(view, coinBody)) {
+            continue;
+        }
+
+        const SDL_FRect src{static_cast<f32>(i * 8), 0.0f, 8.0f, 8.0f};
+        const SDL_FRect dst{fruitBody.x - view.x, fruitBody.y - view.y, fruitBody.w, fruitBody.h};
+        SDL_RenderTexture(renderer, gAssets.fruit.get(), &src, &dst);
     }
 
     // Draw upgrades.

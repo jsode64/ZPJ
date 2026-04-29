@@ -2,6 +2,7 @@
 
 #include "coin.h"
 #include "def.h"
+#include "fruit.h"
 #include "tile.h"
 #include "upgrades.h"
 #include "window.h"
@@ -13,7 +14,7 @@
 class Player;
 
 class World {
-  private:
+private:
     /** The maximum number of objects that can be in a world. */
     static constexpr usize MAX_NUM_OBJS = 1024;
 
@@ -23,11 +24,14 @@ class World {
     /** The number of tiles in the world. */
     usize numTiles;
 
-    /** The world's collectables. */
+    /** The world's coins. */
     std::array<Coin, MAX_NUM_OBJS> coins;
 
     /** The number of coins in the world. */
     usize numCoins;
+
+    /** The world's fruit. */
+    std::array<Fruit, 5> fruits;
 
     /** The dash upgrade. */
     Upgrade dashUpgrade;
@@ -59,13 +63,19 @@ class World {
         numCoins++;
     }
 
-  public:
+public:
+    /** The exit door. */
+    static constexpr SDL_FRect DOOR{0, 0, 45, 80};
+
     World();
 
     ~World();
 
     /** Returns a span of all tiles. */
     std::span<const Tile> get_tiles() const;
+
+    /** Returns whether the fruits are all collected. */
+    bool are_fruits_collected() const;
 
     /** Initializes the world. */
     void init(const Player& player);

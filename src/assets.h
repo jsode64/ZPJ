@@ -41,6 +41,9 @@ class Assets {
     /** The dash upgrade texture. */
     Texture dash;
 
+    /** The fruit collectable texture. */
+    Texture fruit;
+
     constexpr Assets() : font{nullptr}, jumpSound{}, coinCollectSound{}, menuText{} {}
 
     /** Loads the game assets. */
