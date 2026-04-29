@@ -29,20 +29,20 @@ private:
     /** The starting battery capacity before upgrades in ticks. */
     static constexpr i32 STARTING_BATTERY_CAPACITY = BASE_BATTERY_COST * 30;
 
-    /** The left key. */
-    static constexpr SDL_Scancode LEFT_KEY = SDL_SCANCODE_LEFT;
-
-    /** The right key. */
-    static constexpr SDL_Scancode RIGHT_KEY = SDL_SCANCODE_RIGHT;
-
-    /** The jump key. */
-    static constexpr SDL_Scancode JUMP_KEY = SDL_SCANCODE_UP;
-
-    /** The dash key. */
-    static constexpr SDL_Scancode DASH_KEY = SDL_SCANCODE_LSHIFT;
-
     /** The maximum coyote time in ticks. */
     static constexpr i32 MAX_COYOTE_TIME = 8;
+
+    /** The left key. */
+    SDL_Scancode leftKey = SDL_SCANCODE_LEFT;
+
+    /** The right key. */
+    SDL_Scancode rightKey = SDL_SCANCODE_RIGHT;
+
+    /** The jump key. */
+    SDL_Scancode jumpKey = SDL_SCANCODE_UP;
+
+    /** The dash key. */
+    SDL_Scancode dashKey = SDL_SCANCODE_LSHIFT;
 
     /** The jump key state. */
     Key jumpKeyState;
@@ -184,6 +184,30 @@ public:
 
     /** Unlocks the double jump. */
     void unlock_double_jump();
+
+    /** Sets the left key. */
+    void set_left_key(SDL_Scancode key) { leftKey = key; }
+
+    /** Sets the right key. */
+    void set_right_key(SDL_Scancode key) { rightKey = key; }
+
+    /** Sets the jump key. */
+    void set_jump_key(SDL_Scancode key) { jumpKey = key; }
+
+    /** Sets the dash key. */
+    void set_dash_key(SDL_Scancode key) { dashKey = key; }
+
+    /** Returns the left key. */
+    SDL_Scancode get_left_key() const { return leftKey; }
+
+    /** Returns the right key. */
+    SDL_Scancode get_right_key() const { return rightKey; }
+
+    /** Returns the jump key. */
+    SDL_Scancode get_jump_key() const { return jumpKey; }
+
+    /** Returns the dash key. */
+    SDL_Scancode get_dash_key() const { return dashKey; }
 
     /** Initializes the player. */
     void init();

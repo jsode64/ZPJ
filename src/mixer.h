@@ -22,6 +22,9 @@ class Mixer {
 
     /** Initializes the audio mixer. */
     void init();
+
+    /** Sets the volume of the mixer. */
+    void set_volume(f32 volume);
 };
 
 /** Global audio mixer instance. */

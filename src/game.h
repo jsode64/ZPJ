@@ -2,7 +2,10 @@
 
 #include <SDL3_ttf/SDL_ttf.h>
 
+#include "main_menu.h"
+#include "pause_menu.h"
 #include "player.h"
+#include "settings_menu.h"
 #include "shop.h"
 #include "texture.h"
 #include "window.h"
@@ -11,6 +14,9 @@
 class Game {
   private:
     enum class State {
+        MainMenu,
+        SettingsMenu,
+        Paused,
         Level,
         Shop,
     };
@@ -24,14 +30,50 @@ class Game {
     /** The shop menu. */
     Shop shop;
 
+    /** The main menu. */
+    MainMenu main_menu;
+
+    /** The settings menu. */
+    SettingsMenu settings_menu;
+
+    /** The pause menu. */
+    PauseMenu pause_menu;
+
     /** The current game state. */
     State state;
+
+    /** The previous state (used for settings menu return). */
+    State previous_state;
+
+    /** Pause key (Escape). */
+    Key pause_key;
 
   public:
     Game();
 
     /** Sets the game state to level. */
     void start_level();
+
+    /** Opens the settings menu. */
+    void open_settings();
+
+    /** Closes the settings menu and returns to previous state. */
+    void close_settings();
+
+    /** Opens the main menu. */
+    void open_main_menu();
+
+    /** Resumes the game from pause. */
+    void resume();
+
+    /** Toggles the pause state. */
+    void toggle_pause();
+
+    /** Returns the player. */
+    Player& get_player() { return player; }
+
+    /** Returns the shop. */
+    Shop& get_shop() { return shop; }
 
     /** Updates the game. */
     void update();

@@ -10,12 +10,27 @@
 #include "world.h"
 
 Player::Player()
-    : jumpKeyState(KEY_DOWN_SCANCODE(JUMP_KEY)), dashKeyState(KEY_DOWN_SCANCODE(DASH_KEY)), body{}, v{}, ground{},
-      xSpeedMulti{1.0f}, xSpeed{BASE_X_SPEED * xSpeedMulti}, jumpSpeedMulti{0.0f}, jumpSpeed{BASE_JUMP_SPEED * jumpSpeedMulti},
-      dashSpeedMulti{2.0f}, dashSpeed{xSpeed * dashSpeedMulti},
-      batteryCapacity{1'000}, batteryCapacityIncrease{100}, batteryCost{BASE_BATTERY_COST}, batteryRemaining{1'000},
-      dashCooldown{0}, numCoins{1000}, hasDoubleJump{false}, isDoubleJumpUnlocked{false},
-      isDashUnlocked{false}, coyoteTime{0} {
+    : jumpKeyState{[this]() { return SDL_GetKeyboardState(nullptr)[jumpKey]; }},
+      dashKeyState{[this]() { return SDL_GetKeyboardState(nullptr)[dashKey]; }},
+      body{},
+      v{},
+      ground{},
+      xSpeedMulti{1.0f},
+      xSpeed{BASE_X_SPEED * xSpeedMulti},
+      jumpSpeedMulti{0.0f},
+      jumpSpeed{BASE_JUMP_SPEED * jumpSpeedMulti},
+      dashSpeedMulti{2.0f},
+      dashSpeed{xSpeed * dashSpeedMulti},
+      batteryCapacity{1'000},
+      batteryCapacityIncrease{100},
+      batteryCost{BASE_BATTERY_COST},
+      batteryRemaining{1'000},
+      dashCooldown{0},
+      numCoins{1000},
+      hasDoubleJump{false},
+      isDoubleJumpUnlocked{false},
+      isDashUnlocked{false},
+      coyoteTime{0} {
     init();
 }
 
@@ -29,10 +44,10 @@ void Player::handle_input() {
     // Horizontal movement.
     const bool isDashing = dashKeyState.was_just_pressed() && isDashUnlocked && (dashCooldown < 0);
     const f32 speed = isDashing ? dashSpeed : xSpeed;
-    if (keys[LEFT_KEY]) {
+    if (keys[leftKey]) {
         v.x = -speed;
         isFacingLeft = true;
-    } else if (keys[RIGHT_KEY]) {
+    } else if (keys[rightKey]) {
         v.x = speed;
         isFacingLeft = false;
     } else {
