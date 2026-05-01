@@ -4,7 +4,6 @@
 #include <exception>
 #include "assets.h"
 #include "coin.h"
-#include "config.h"
 #include "mixer.h"
 #include "util.h"
 #include "world.h"
@@ -47,8 +46,9 @@ void Player::handle_input() {
         coyoteTime = 0;
     }
 
+    // Apply gravity if not standing on a tile.
     if (!ground) {
-        v.y += GRAVITY;
+        v.y += 1.0f;
     }
 }
 

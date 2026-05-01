@@ -8,9 +8,6 @@
 
 class Assets {
   public:
-    /** The path to the game's font. */
-    static constexpr const char* FONT_PATH = "assets/comic_sans.ttf";
-
     /** The game's font. */
     TTF_Font* font;
 

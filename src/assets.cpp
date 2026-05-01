@@ -2,24 +2,26 @@
 
 #include <exception>
 #include <format>
+#include "config.hpp"
 
 Assets gAssets;
 
 void Assets::load_assets() {
-    if (!TTF_Init() || !(font = TTF_OpenFont(FONT_PATH, 16.0f))) {
+    const auto FONT_PATH = make_path("comic_sans.ttf");
+    if (!TTF_Init() || !(font = TTF_OpenFont(FONT_PATH.data(), 16.0f))) {
         const auto e = std::format("Failed to load font from `{}`: \"{}\"", FONT_PATH, SDL_GetError());
         throw std::runtime_error(e);
     }
 
-    jumpSound.load("assets/jump.mp3");
-    coinCollectSound.load("assets/coin.wav");
+    jumpSound.load(make_path("jump.mp3").c_str());
+    coinCollectSound.load(make_path("coin.wav").c_str());
 
     menuText.load_text(font, "Press ENTER to continue!");
-    
-    player.load_png("assets/player.png");
-    coin.load_png("assets/coin.png");
-    rock.load_png("assets/rock.png");
-    doubleJump.load_png("assets/doublejump.png");
-    dash.load_png("assets/dash.png");
-    fruit.load_png("assets/fruit.png");
+
+    player.load_png(make_path("player.png").c_str());
+    coin.load_png(make_path("coin.png").c_str());
+    rock.load_png(make_path("rock.png").c_str());
+    doubleJump.load_png(make_path("doublejump.png").c_str());
+    dash.load_png(make_path("dash.png").c_str());
+    fruit.load_png(make_path("fruit.png").c_str());
 }
