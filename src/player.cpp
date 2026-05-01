@@ -46,7 +46,10 @@ void Player::handle_input() {
         hasDoubleJump = is_on_ground() || coyoteTime > 0;
         coyoteTime = 0;
     }
-    v.y += GRAVITY;
+
+    if (!ground) {
+        v.y += GRAVITY;
+    }
 }
 
 void Player::handle_completion(const World& world) {
