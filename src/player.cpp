@@ -56,91 +56,178 @@ void Player::handle_completion(const World& world) {
 }
 
 void Player::handle_movement(const World& world) {
-    float x = body.x + v.x;
-    float y = body.y + v.y;
-
-    /* Tracking squishing. Each is tracking if hit from that direction, for
-    example, `hitDown` will be true when hit from below (landing/standing) */
-    bool hitUp = false;
-    bool hitDown = false;
-    bool hitLeft = false;
-    bool hitRight = false;
-
-    // If on a tile, move with it.
-    if (ground.has_value()) {
-        x += ground.value()->get_v().x;
-    }
+    const Tile* oldGround = ground.value_or(nullptr);
     ground = std::nullopt;
 
-    for (const auto& tile : world.get_tiles()) {
-        // Horizontal collision check.
-        const auto tileBody = tile.get_body();
-        const auto tileV = tile.get_v();
-        auto testBody = SDL_FRect{x, body.y, body.w, body.h};
-        auto pre = tileBody;
-        pre.y -= tileV.y;
-        if (do_rects_collide(testBody, tileBody) && do_rects_collide(testBody, pre)) {
-            if (v.x > 0.0f) {
-                if (tileV.x > v.x) {
-                    // Both moving right, tile faster:
-                    x = tileBody.x + tileBody.w;
-                    v.x = tileV.x;
-                    hitLeft = true;
-                } else {
-                    x = tileBody.x - body.w;
-                    v.x = 0.0f;
-                    hitRight = true;
-                }
-            } else if (v.x < 0.0f) {
-                if (tileV.x < v.x) {
-                    // Both moving left, tile faster:
-                    x = tileBody.x - body.w;
-                    v.x = tileV.x;
-                    hitRight = true;
-                } else {
-                    x = tileBody.x + tileBody.w;
-                    v.x = 0.0f;
-                    hitLeft = true;
-                }
+    SDL_FPoint move = v;
+
+    // Carry with platform you were already standing on.
+    if (oldGround != nullptr) {
+        move.x += oldGround->get_v().x;
+        move.y += oldGround->get_v().y;
+    }
+
+    bool hitLeft = false;
+    bool hitRight = false;
+    bool hitTop = false;
+    bool hitBottom = false;
+
+    constexpr float EPS = 0.0001f;
+    float remaining = 1.0f;
+
+    for (int iter = 0; iter < 6 && remaining > EPS; iter++) {
+        float bestT = 1.0f;
+        const Tile* bestTile = nullptr;
+        float bestNX = 0.0f;
+        float bestNY = 0.0f;
+
+        SDL_FRect bestTileStart{};
+        SDL_FPoint bestTileMove{};
+
+        for (const auto& tile : world.get_tiles()) {
+            const SDL_FPoint tileMove = tile.get_v();
+            const SDL_FRect tileEnd = tile.get_body();
+
+            const SDL_FRect tileStart{
+                tileEnd.x - tileMove.x,
+                tileEnd.y - tileMove.y,
+                tileEnd.w,
+                tileEnd.h
+            };
+
+            const float relX = (move.x - tileMove.x) * remaining;
+            const float relY = (move.y - tileMove.y) * remaining;
+
+            if (std::abs(relX) < EPS && std::abs(relY) < EPS) {
+                continue;
+            }
+
+            float xEntry, xExit;
+            float yEntry, yExit;
+
+            if (std::abs(relX) < EPS) {
+                if (body.x + body.w <= tileStart.x || body.x >= tileStart.x + tileStart.w)
+                    continue;
+
+                xEntry = -INFINITY;
+                xExit = INFINITY;
+            } else if (relX > 0.0f) {
+                xEntry = (tileStart.x - (body.x + body.w)) / relX;
+                xExit = ((tileStart.x + tileStart.w) - body.x) / relX;
             } else {
-                if (body.x + body.w > tileBody.x) {
-                    body.x = tileBody.x - body.w;
-                    hitRight = true;
+                xEntry = ((tileStart.x + tileStart.w) - body.x) / relX;
+                xExit = (tileStart.x - (body.x + body.w)) / relX;
+            }
+
+            if (std::abs(relY) < EPS) {
+                if (body.y + body.h <= tileStart.y || body.y >= tileStart.y + tileStart.h) {
+                    continue;
+                }
+
+                yEntry = -INFINITY;
+                yExit = INFINITY;
+            } else if (relY > 0.0f) {
+                yEntry = (tileStart.y - (body.y + body.h)) / relY;
+                yExit = ((tileStart.y + tileStart.h) - body.y) / relY;
+            } else {
+                yEntry = ((tileStart.y + tileStart.h) - body.y) / relY;
+                yExit = (tileStart.y - (body.y + body.h)) / relY;
+            }
+
+            const float entryT = std::max(xEntry, yEntry);
+            const float exitT = std::min(xExit, yExit);
+
+            if (entryT > exitT || entryT < 0.0f || entryT > 1.0f)
+                continue;
+
+            if (entryT < bestT) {
+                bestT = entryT;
+                bestTile = &tile;
+                bestTileStart = tileStart;
+                bestTileMove = tileMove;
+
+                if (xEntry > yEntry) {
+                    bestNX = (relX > 0.0f) ? -1.0f : 1.0f;
+                    bestNY = 0.0f;
                 } else {
-                    body.x = tileBody.x + tileBody.w;
-                    hitLeft = true;
+                    bestNX = 0.0f;
+                    bestNY = (relY > 0.0f) ? -1.0f : 1.0f;
                 }
             }
-            v.x = 0.0f;
         }
 
-        // Vertical collision check.
-        testBody = SDL_FRect{x, y, body.w, body.h};
-        if (do_rects_collide(testBody, tileBody)) {
-            if (v.y >= 0.0f) {
-                y = tileBody.y - body.h;
-
-                // On ground.
-                hasDoubleJump = isDoubleJumpUnlocked;
-                ground = &tile;
-                hitDown = true;
-            } else {
-                y = tileBody.y + tileBody.h + tileV.y;
-                hitUp = true;
-            }
-            v.y = std::max(0.f, tileV.y);
+        if (bestTile == nullptr) {
+            body.x += move.x * remaining;
+            body.y += move.y * remaining;
+            break;
         }
 
-        // Check for squish.
-        if ((hitLeft && hitRight) || (hitUp && hitDown)) {
+        body.x += move.x * bestT * remaining;
+        body.y += move.y * bestT * remaining;
+
+        SDL_FRect tileAtHit{
+            bestTileStart.x + bestTileMove.x * bestT * remaining,
+            bestTileStart.y + bestTileMove.y * bestT * remaining,
+            bestTileStart.w,
+            bestTileStart.h
+        };
+
+        if (bestNX > 0.0f) hitLeft = true;
+        if (bestNX < 0.0f) hitRight = true;
+        if (bestNY > 0.0f) hitTop = true;
+        if (bestNY < 0.0f) hitBottom = true;
+
+        if ((hitLeft && hitRight) || (hitTop && hitBottom)) {
             kill();
             return;
         }
+
+        if (bestNX != 0.0f) {
+            v.x = 0.0f;
+            move.x = bestTileMove.x;
+
+            if (bestNX < 0.0f)
+                body.x = tileAtHit.x - body.w;
+            else
+                body.x = tileAtHit.x + tileAtHit.w;
+        }
+
+        if (bestNY != 0.0f) {
+            v.y = 0.0f;
+            move.y = bestTileMove.y;
+
+            if (bestNY < 0.0f) {
+                body.y = tileAtHit.y - body.h;
+                ground = bestTile;
+                hasDoubleJump = false;
+            } else {
+                body.y = tileAtHit.y + tileAtHit.h;
+            }
+        }
+
+        remaining *= (1.0f - bestT);
     }
 
-    // Move to new position.
-    body.x = x;
-    body.y = y;
+    // Ground probe for standing still.
+    if (!ground) {
+        for (const auto& tile : world.get_tiles()) {
+            const SDL_FRect t = tile.get_body();
+
+            const bool overlapsX =
+                body.x + body.w > t.x &&
+                body.x < t.x + t.w;
+
+            const bool touchingTop =
+                std::abs((body.y + body.h) - t.y) < 0.1f;
+
+            if (overlapsX && touchingTop && v.y >= 0.0f) {
+                body.y = t.y - body.h;
+                ground = &tile;
+                hasDoubleJump = false;
+                break;
+            }
+        }
+    }
 }
 
 SDL_FPoint Player::get_texture_coordinates() const {
