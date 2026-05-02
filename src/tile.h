@@ -19,9 +19,9 @@ class Tile {
     UpdateFn updateFn;
 
   public:
-    constexpr Tile() : body{{}}, v{{}}, updateFn{nullptr} {}
+    constexpr Tile() : body{}, v{}, updateFn{nullptr} {}
 
-    constexpr Tile(SDL_FRect body, UpdateFn updateFn) : body{body}, v{{}}, updateFn{updateFn} {}
+    constexpr Tile(SDL_FRect body, UpdateFn updateFn) : body{body}, v{}, updateFn{updateFn} {}
 
     /** Returns the tile's update function. */
     UpdateFn get_update_fn() const;
@@ -45,7 +45,6 @@ class Tile {
         const auto midY = (begY + endY) / 2.0f;                                                                        \
         const auto rangeX = (endX - begX) / 2.0f;                                                                      \
         const auto rangeY = (endY - begY) / 2.0f;                                                                      \
-        const auto src = tile.get_body();                                                                              \
         const auto ticks = SDL_GetTicks();                                                                             \
         const f32 m = std::sin(static_cast<f32>(ticks) / (t * 500.0f));                                                \
         const auto body = tile.get_body();                                                                             \

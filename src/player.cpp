@@ -3,9 +3,9 @@
 #include <algorithm>
 #include <exception>
 #include "assets.h"
-#include "coin.h"
 #include "mixer.h"
 #include "util.h"
+#include "window.h"
 #include "world.h"
 
 Player::Player()
@@ -13,8 +13,8 @@ Player::Player()
       xSpeedMulti{1.0f}, xSpeed{BASE_X_SPEED * xSpeedMulti}, jumpSpeedMulti{0.0f}, jumpSpeed{BASE_JUMP_SPEED * jumpSpeedMulti},
       dashSpeedMulti{2.0f}, dashSpeed{xSpeed * dashSpeedMulti},
       batteryCapacity{1'000}, batteryCapacityIncrease{100}, batteryCost{BASE_BATTERY_COST}, batteryRemaining{1'000},
-      dashCooldown{0}, numCoins{1000}, hasDoubleJump{false}, isDoubleJumpUnlocked{false},
-      isDashUnlocked{false}, coyoteTime{0} {
+      dashCooldown{0}, numCoins{0}, coyoteTime{0}, hasDoubleJump{false}, isDoubleJumpUnlocked{false},
+      isDashUnlocked{false}, isFacingLeft{false} {
     init();
 }
 
@@ -345,8 +345,7 @@ void Player::update(World& world) {
 
 void Player::draw() const {
     const auto renderer = gWindow.get_renderer();
-    const f32 winW = f32(gWindow.get_width());
-    const f32 winH = f32(gWindow.get_height());
+    const f32 winW = gWindow.get_width();
 
     // Draw the player body.
     const auto srcPos = get_texture_coordinates();
@@ -354,8 +353,12 @@ void Player::draw() const {
         srcPos.x, srcPos.y,
         8.0f, 8.0f,
     };
-    const SDL_FRect bodyDst(
-        (f32(gWindow.get_width()) - body.w) / 2.0f, (f32(gWindow.get_height()) - body.h) / 2.0f, body.w, body.h);
+    const SDL_FRect bodyDst{
+        (f32(gWindow.get_width()) - body.w) / 2.0f, 
+        (f32(gWindow.get_height()) - body.h) / 2.0f, 
+        body.w, 
+        body.h
+    };
     SDL_RenderTextureRotated(renderer, gAssets.player.get(), &src, &bodyDst, 0.0, nullptr, 
 isFacingLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
 

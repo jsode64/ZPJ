@@ -86,7 +86,7 @@ Shop::Shop(Game& game, Player& player) : game{game}, player{player}, click(KEY_D
     };
 }
 
-void Shop::update(f32 mouseX, f32 mouseY, bool mouse_clicked) {
+void Shop::update(f32 mouseX, f32 mouseY, bool) {
     // See if the user clicked.
     click.update();
     if (!click.was_just_pressed()) {
