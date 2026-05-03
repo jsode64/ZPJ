@@ -4,63 +4,44 @@ project(zpj CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(EXECUTABLE_NAME ${PROJECT_NAME})
 
-include(FetchContent)
+# Configure SDL by calling its CMake file.
+# we use EXCLUDE_FROM_ALL so that its install targets and configs don't
+# pollute upwards into our configuration.
+add_subdirectory(SDL EXCLUDE_FROM_ALL)
 
-FetchContent_Declare(
-    SDL
-    GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-    GIT_TAG release-3.4.8
-)
+# If you don't want SDL_ttf, then remove this section.
+set(SDLTTF_VENDORED ON) # tell SDL_ttf to build its own dependencies
+add_subdirectory(SDL_ttf EXCLUDE_FROM_ALL)	
 
-FetchContent_Declare(
-    SDL_image
-    GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
-    GIT_TAG release-3.4.4
-)
+# SDL_mixer (used for playing audio)
+set(SDLMIXER_MIDI_NATIVE OFF)     # disable formats we don't use to make the build faster and smaller. Also some of these don't work on all platforms so you'll need to do some experimentation.
+set(SDLMIXER_GME OFF)
+set(SDLMIXER_WAVPACK OFF)     
+set(SDLMIXER_MOD OFF)
+set(SDLMIXER_MOD_XMP OFF)
+set(SDLMIXER_OPUS OFF)
+set(SDLMIXER_MP3_MPG123 ON)
+set(SDLMIXER_VORBIS_VORBISFILE OFF)
+set(SDLMIXER_FLAC_LIBFLAC OFF)
+set(SDLMIXER_VENDORED ON)   # tell SDL_mixer to build its own dependencies
+add_subdirectory(SDL_mixer EXCLUDE_FROM_ALL)
 
-FetchContent_Declare(
-    SDL_mixer
-    GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
-    GIT_TAG release-3.2.0
-)
-
-FetchContent_Declare(
-    SDL_ttf
-    GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
-    GIT_TAG release-3.2.2
-)
-
-FetchContent_MakeAvailable(SDL SDL_image SDL_mixer SDL_ttf)
-
-include(GNUInstallDirs)
-
-configure_file(
-    ${CMAKE_SOURCE_DIR}/src/config.hpp.in
-    ${CMAKE_BINARY_DIR}/src/config.hpp
-)
+# SDL_image (used for loading various image formats)
+set(SDLIMAGE_VENDORED ON)
+set(SDLIMAGE_AVIF OFF)	# disable formats we don't use to make the build faster and smaller.
+set(SDLIMAGE_BMP OFF)
+set(SDLIMAGE_JPEG OFF)
+set(SDLIMAGE_WEBP OFF)
+set(SDLIMAGE_PNG_LIBPNG OFF)    # SDL3 includes built-in support for loading PNGs. If you need more than what that supports, enable this option.
+add_subdirectory(SDL_image EXCLUDE_FROM_ALL)
 
 file(GLOB SOURCES "src/main.cc" "src/*.cpp")
 add_executable(${EXECUTABLE_NAME} ${SOURCES})
 
-target_compile_options(${EXECUTABLE_NAME} PRIVATE
-    -Wall -Wextra -Wpedantic -Werror -g
-)
-
+# Link SDL to our executable. This also makes its include directory available to us. 
 target_link_libraries(${EXECUTABLE_NAME} PRIVATE
-    SDL3::SDL3
-    SDL3_image::SDL3_image
-    SDL3_mixer::SDL3_mixer
-    SDL3_ttf::SDL3_ttf
-)
-
-target_include_directories(${EXECUTABLE_NAME} PRIVATE
-    ${CMAKE_BINARY_DIR}/src
-)
-
-install(TARGETS ${EXECUTABLE_NAME}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/assets/
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/ZPJ
+	SDL3_ttf::SDL3_ttf      # remove if you are not using SDL_ttf
+	SDL3_mixer::SDL3_mixer  # remove if you are not using SDL_mixer
+	SDL3_image::SDL3_image	# remove if you are not using SDL_image
+    SDL3::SDL3              # If using satelite libraries, SDL must be the last item in the list. 
 )
