@@ -2,7 +2,7 @@
 
 #include <exception>
 #include <format>
-#include "config.hpp.in"
+#include "config.hpp"
 
 Assets gAssets;
 
@@ -17,7 +17,7 @@ void Assets::load_assets() {
     coinCollectSound.load(make_path("coin.wav").c_str());
 
     menuText.load_text(font, "Press ENTER to continue!");
-
+    grass.load_png(make_path("grass_tile.png").c_str());
     player.load_png(make_path("player.png").c_str());
     coin.load_png(make_path("coin.png").c_str());
     doubleJump.load_png(make_path("doublejump.png").c_str());
