@@ -26,8 +26,8 @@ class Assets {
     /** The coin sprite map. */
     Texture coin;
 
-    /** The rock texture for platforms. */
-    Texture rock;
+    /** The grass texture for platforms. */
+    Texture grass;
 
     /** The double jump upgrade texture. */
     Texture doubleJump;

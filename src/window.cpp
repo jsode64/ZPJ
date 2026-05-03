@@ -56,7 +56,7 @@ void Window::update() {
 
     // Show render and clear.
     SDL_RenderPresent(renderer);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 120, 180, 240, 255);
     SDL_RenderClear(renderer);
 
     // Update info.

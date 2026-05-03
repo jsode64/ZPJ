@@ -10,11 +10,11 @@
 
 Player::Player()
     : jumpKeyState(KEY_DOWN_SCANCODE(JUMP_KEY)), dashKeyState(KEY_DOWN_SCANCODE(DASH_KEY)), body{}, v{}, ground{},
-      xSpeedMulti{1.0f}, xSpeed{BASE_X_SPEED * xSpeedMulti}, jumpSpeedMulti{0.0f}, jumpSpeed{BASE_JUMP_SPEED * jumpSpeedMulti},
+      xSpeedMulti{1.0f}, xSpeed{BASE_X_SPEED * xSpeedMulti}, jumpSpeedMulti{3.0f}, jumpSpeed{BASE_JUMP_SPEED * jumpSpeedMulti},
       dashSpeedMulti{2.0f}, dashSpeed{xSpeed * dashSpeedMulti},
       batteryCapacity{1'000}, batteryCapacityIncrease{100}, batteryCost{BASE_BATTERY_COST}, batteryRemaining{1'000},
       dashCooldown{0}, numCoins{0}, coyoteTime{0}, hasDoubleJump{false}, isDoubleJumpUnlocked{false},
-      isDashUnlocked{false}, isFacingLeft{false} {
+      isDashUnlocked{false}, damagableCooldown{0}, isFacingLeft{false} {
     init();
 }
 
@@ -274,6 +274,10 @@ void Player::kill() { batteryRemaining = -1; }
 
 bool Player::is_out_of_battery() const { return batteryRemaining < 0; }
 
+void Player::take_damage() {
+    batteryRemaining -= (batteryCapacity / 10);
+}
+
 bool Player::take_coins(i32 cost) {
     if (numCoins >= cost) {
         numCoins -= cost;
@@ -334,6 +338,9 @@ void Player::update(World& world) {
 
     batteryRemaining -= batteryCost;
     dashCooldown--;
+    if (damagableCooldown > 0) {
+        damagableCooldown--;
+    }
 
     // Reset coyote time when on ground.
     if (is_on_ground()) {
@@ -360,7 +367,7 @@ void Player::draw() const {
         body.h
     };
     SDL_RenderTextureRotated(renderer, gAssets.player.get(), &src, &bodyDst, 0.0, nullptr, 
-isFacingLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
+    isFacingLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
 
     // Draw the battery meter.
     const f32 percentBattery = f32(batteryRemaining) / f32(batteryCapacity);

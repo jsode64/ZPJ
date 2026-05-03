@@ -2,7 +2,7 @@
 
 #include <exception>
 #include <format>
-#include "config.hpp"
+#include "config.hpp.in"
 
 Assets gAssets;
 
@@ -20,7 +20,6 @@ void Assets::load_assets() {
 
     player.load_png(make_path("player.png").c_str());
     coin.load_png(make_path("coin.png").c_str());
-    rock.load_png(make_path("rock.png").c_str());
     doubleJump.load_png(make_path("doublejump.png").c_str());
     dash.load_png(make_path("dash.png").c_str());
     fruit.load_png(make_path("fruit.png").c_str());

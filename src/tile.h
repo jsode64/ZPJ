@@ -1,5 +1,6 @@
 #pragma once
 
+#include "def.h"
 #include <SDL3/SDL.h>
 #include <cmath>
 #include <functional>
@@ -18,10 +19,16 @@ class Tile {
     /** The tile's update function. */
     UpdateFn updateFn;
 
-  public:
-    constexpr Tile() : body{}, v{}, updateFn{nullptr} {}
+    /** Whether this tile damages the player on contact. */
+    bool damageable;
 
-    constexpr Tile(SDL_FRect body, UpdateFn updateFn) : body{body}, v{}, updateFn{updateFn} {}
+    /** Cooldown timer in ticks for damage. */
+    mutable i32 damagableCooldown;
+
+  public:
+    constexpr Tile() : body{{}}, v{{}}, updateFn{nullptr}, damageable{false}, damagableCooldown{0} {}
+
+    constexpr Tile(SDL_FRect body, UpdateFn updateFn, bool damageable) : body{body}, v{{}}, updateFn{updateFn}, damageable{damageable}, damagableCooldown{0} {}
 
     /** Returns the tile's update function. */
     UpdateFn get_update_fn() const;
@@ -34,6 +41,15 @@ class Tile {
 
     /** Sets the tile's velocity. */
     void set_v(SDL_FPoint v);
+
+    /** Returns whether this tile damages the player. */
+    bool is_damageable() const;
+
+    /** Sets whether this tile damages the player. */
+    void set_damageable(bool dmg);
+
+    /** Resets the damage cooldown. */
+    void reset_damage_cooldown() const;
 
     /** Updates the tile. */
     void update();
