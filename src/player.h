@@ -116,9 +116,7 @@ private:
     /** Handles user input for movement. */
     void handle_input();
 
-    /** Handle the player completing the game. */
-    void handle_completion(const World& world);
-  
+
     /** Handles movement and collision. */
     void handle_movement(const World& world);
 
@@ -126,6 +124,9 @@ public:
     Player();
 
     ~Player();
+
+    /** Check if the player has completed the level. */
+    bool has_completed_level(const World& world) const;
 
     /** Returns the player's body. */
     SDL_FRect get_body() const;

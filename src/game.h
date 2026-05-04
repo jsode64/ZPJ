@@ -8,7 +8,9 @@
 #include "settings_menu.h"
 #include "shop.h"
 #include "texture.h"
+#include "tutorial_menu.h"
 #include "window.h"
+#include "win_menu.h"
 #include "world.h"
 
 class Game {
@@ -16,6 +18,8 @@ class Game {
     enum class State {
         MainMenu,
         SettingsMenu,
+        TutorialMenu,
+        WinMenu,
         Paused,
         Level,
         Shop,
@@ -35,6 +39,12 @@ class Game {
 
     /** The settings menu. */
     SettingsMenu settings_menu;
+
+    /** The tutorial menu. */
+    TutorialMenu tutorial_menu;
+
+    /** The win menu. */
+    WinMenu win_menu;
 
     /** The pause menu. */
     PauseMenu pause_menu;
@@ -59,6 +69,15 @@ class Game {
 
     /** Closes the settings menu and returns to previous state. */
     void close_settings();
+
+    /** Opens the tutorial menu. */
+    void open_tutorial();
+
+    /** Closes the tutorial menu and returns to previous state. */
+    void close_tutorial();
+
+    /** Opens the win menu. */
+    void open_win_menu();
 
     /** Opens the main menu. */
     void open_main_menu();

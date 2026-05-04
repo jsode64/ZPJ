@@ -11,7 +11,7 @@
 
 SDL_FRect SettingsMenu::get_slider_track() const {
     const f32 centerX = f32(gWindow.get_width()) / 2.0f;
-    const f32 centerY = f32(gWindow.get_height()) / 2.0f - 100.0f;
+    const f32 centerY = f32(gWindow.get_height()) / 2.0f - 60.0f;
     return {centerX - SLIDER_W / 2.0f, centerY - SLIDER_H / 2.0f, SLIDER_W, SLIDER_H};
 }
 

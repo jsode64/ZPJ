@@ -64,10 +64,8 @@ void Player::handle_input() {
     v.y += GRAVITY;
 }
 
-void Player::handle_completion(const World& world) {
-    if (world.are_fruits_collected() && do_rects_collide(body, World::DOOR)) {
-        std::terminate();
-    }
+bool Player::has_completed_level(const World& world) const {
+    return world.are_fruits_collected() && do_rects_collide(body, World::DOOR);
 }
 
 void Player::handle_movement(const World& world) {
@@ -254,7 +252,6 @@ void Player::init() {
 
 void Player::update(World& world) {
     handle_input();
-    handle_completion(world);
     handle_movement(world);
 
     batteryRemaining -= batteryCost;

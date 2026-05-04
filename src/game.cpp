@@ -8,6 +8,8 @@ Game::Game()
       shop{*this, player},
       main_menu{*this},
       settings_menu{*this},
+      tutorial_menu{*this},
+      win_menu{*this},
       pause_menu{*this},
       state{State::MainMenu},
       previous_state{State::MainMenu},
@@ -25,6 +27,18 @@ void Game::open_settings() {
 }
 
 void Game::close_settings() { state = previous_state; }
+
+void Game::open_tutorial() {
+    previous_state = state;
+    state = State::TutorialMenu;
+}
+
+void Game::close_tutorial() { state = previous_state; }
+
+void Game::open_win_menu() {
+    previous_state = state;
+    state = State::WinMenu;
+}
 
 void Game::open_main_menu() { state = State::MainMenu; }
 
@@ -51,14 +65,19 @@ void Game::update() {
         main_menu.update(mouseX, mouseY, false);
     } else if (state == State::SettingsMenu) {
         settings_menu.update(mouseX, mouseY, false);
+    } else if (state == State::TutorialMenu) {
+        tutorial_menu.update(mouseX, mouseY, false);
+    } else if (state == State::WinMenu) {
+        win_menu.update(mouseX, mouseY, false);
     } else if (state == State::Paused) {
         pause_menu.update(mouseX, mouseY, false);
     } else if (state == State::Level) {
         world.update(player);
         player.update(world);
 
-        // Go to shop if the player is out of battery.
-        if (player.is_out_of_battery()) {
+        if (player.has_completed_level(world)) {
+            open_win_menu();
+        } else if (player.is_out_of_battery()) {
             state = State::Shop;
         }
     } else if (state == State::Shop) {
@@ -72,6 +91,12 @@ void Game::draw() const {
         main_menu.draw();
     } else if (state == State::SettingsMenu) {
         settings_menu.draw();
+    } else if (state == State::TutorialMenu) {
+        tutorial_menu.draw();
+    } else if (state == State::WinMenu) {
+        world.draw(player);
+        player.draw();
+        win_menu.draw();
     } else if (state == State::Paused) {
         world.draw(player);
         player.draw();
