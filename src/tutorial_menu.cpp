@@ -10,10 +10,9 @@ TutorialMenu::TutorialMenu(Game& game) : game{game}, click(KEY_DOWN_MOUSE(SDL_BU
     const f32 centerX = f32(gWindow.get_width()) / 2.0f;
     const f32 centerY = f32(gWindow.get_height()) / 2.0f;
 
-    const Button BACK_BUTTON{
-        {centerX - BACK_BUTTON_W / 2.0f, centerY + 130.0f, BACK_BUTTON_W, BACK_BUTTON_H},
-        "BACK",
-        [](Player&, Game& g, Shop&) { g.close_tutorial(); }};
+    const Button BACK_BUTTON{{centerX - BACK_BUTTON_W / 2.0f, centerY + 130.0f, BACK_BUTTON_W, BACK_BUTTON_H},
+                             "BACK",
+                             [](Player&, Game& g, Shop&) { g.close_tutorial(); }};
 
     buttons = {BACK_BUTTON};
 }
@@ -42,8 +41,7 @@ void TutorialMenu::draw() const {
     SDL_RenderFillRect(renderer, &bg);
 
     if (gAssets.font) {
-        SDL_Surface* title_surface =
-            TTF_RenderText_Solid(gAssets.font, "TUTORIAL", 8, SDL_Color{255, 255, 100, 255});
+        SDL_Surface* title_surface = TTF_RenderText_Solid(gAssets.font, "TUTORIAL", 8, SDL_Color{255, 255, 100, 255});
         if (title_surface) {
             SDL_Texture* title_texture = SDL_CreateTextureFromSurface(renderer, title_surface);
             if (title_texture) {
@@ -62,25 +60,24 @@ void TutorialMenu::draw() const {
         const char* lines[] = {
             "The goal of the game is to collect all 5 fruits on the map and reach the exit door.",
             "Navigate around the map while collecting coins in order to purchase upgrades in the shop.",
-            "These upgrades will allow you to get to new areas, and give you more time to reach the end."
-        };
+            "These upgrades will allow you to get to new areas, and give you more time to reach the end."};
 
         const f32 spacing = 15.0f;
         f32 currentY = f32(gWindow.get_height()) / 2.0f - 80.0f;
 
         for (const char* line : lines) {
             size_t len = 0;
-            while (line[len] != '\0') len++; // Calculate string length safely
-            
-            SDL_Surface* text_surface =
-                TTF_RenderText_Solid(gAssets.font, line, len, SDL_Color{255, 255, 255, 255});
+            while (line[len] != '\0')
+                len++; // Calculate string length safely
+
+            SDL_Surface* text_surface = TTF_RenderText_Solid(gAssets.font, line, len, SDL_Color{255, 255, 255, 255});
             if (text_surface) {
                 SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
                 if (text_texture) {
                     SDL_FRect text_rect{(f32(gWindow.get_width()) - f32(text_surface->w)) / 2.0f,
-                                         currentY,
-                                         f32(text_surface->w),
-                                         f32(text_surface->h)};
+                                        currentY,
+                                        f32(text_surface->w),
+                                        f32(text_surface->h)};
                     SDL_RenderTexture(renderer, text_texture, nullptr, &text_rect);
                     SDL_DestroyTexture(text_texture);
                 }

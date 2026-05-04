@@ -1,34 +1,20 @@
 #include "player.h"
 
-#include <algorithm>
-#include <exception>
 #include "assets.h"
 #include "mixer.h"
 #include "util.h"
 #include "window.h"
 #include "world.h"
+#include <algorithm>
+#include <exception>
 
 Player::Player()
     : jumpKeyState{[this]() { return SDL_GetKeyboardState(nullptr)[jumpKey]; }},
-      dashKeyState{[this]() { return SDL_GetKeyboardState(nullptr)[dashKey]; }},
-      body{},
-      v{},
-      ground{},
-      xSpeedMulti{1.0f},
-      xSpeed{BASE_X_SPEED * xSpeedMulti},
-      jumpSpeedMulti{0.0f},
-      jumpSpeed{BASE_JUMP_SPEED * jumpSpeedMulti},
-      dashSpeedMulti{2.0f},
-      dashSpeed{xSpeed * dashSpeedMulti},
-      batteryCapacity{1'000},
-      batteryCapacityIncrease{100},
-      batteryCost{BASE_BATTERY_COST},
-      batteryRemaining{1'000},
-      dashCooldown{0},
-      numCoins{1000},
-      coyoteTime{0},
-      hasDoubleJump{false},
-      isDoubleJumpUnlocked{false},
+      dashKeyState{[this]() { return SDL_GetKeyboardState(nullptr)[dashKey]; }}, body{}, v{}, ground{},
+      xSpeedMulti{1.0f}, xSpeed{BASE_X_SPEED * xSpeedMulti}, jumpSpeedMulti{0.0f},
+      jumpSpeed{BASE_JUMP_SPEED * jumpSpeedMulti}, dashSpeedMulti{2.0f}, dashSpeed{xSpeed * dashSpeedMulti},
+      batteryCapacity{1'000}, batteryCapacityIncrease{100}, batteryCost{BASE_BATTERY_COST}, batteryRemaining{1'000},
+      dashCooldown{0}, numCoins{1000}, coyoteTime{0}, hasDoubleJump{false}, isDoubleJumpUnlocked{true},
       isDashUnlocked{false} {
     init();
 }
@@ -54,13 +40,17 @@ void Player::handle_input() {
     }
 
     // Vertical movement.
-    if (jumpKeyState.was_just_pressed() && (is_on_ground() || coyoteTime > 0 || (isDoubleJumpUnlocked && hasDoubleJump))) {
+    if (jumpKeyState.was_just_pressed() &&
+        (is_on_ground() || coyoteTime > 0 || (isDoubleJumpUnlocked && hasDoubleJump))) {
         v.y = -jumpSpeed;
         gMixer.play_sound(gAssets.jumpSound);
         hasDoubleJump = is_on_ground() || coyoteTime > 0;
         coyoteTime = 0;
     }
-    v.y += GRAVITY;
+
+    if (!ground) {
+        v.y += GRAVITY;
+    }
 }
 
 bool Player::has_completed_level(const World& world) const {
@@ -100,12 +90,7 @@ void Player::handle_movement(const World& world) {
             const SDL_FPoint tileMove = tile.get_v();
             const SDL_FRect tileEnd = tile.get_body();
 
-            const SDL_FRect tileStart{
-                tileEnd.x - tileMove.x,
-                tileEnd.y - tileMove.y,
-                tileEnd.w,
-                tileEnd.h
-            };
+            const SDL_FRect tileStart{tileEnd.x - tileMove.x, tileEnd.y - tileMove.y, tileEnd.w, tileEnd.h};
 
             const float relX = (move.x - tileMove.x) * remaining;
             const float relY = (move.y - tileMove.y) * remaining;
@@ -177,17 +162,19 @@ void Player::handle_movement(const World& world) {
         body.x += move.x * bestT * remaining;
         body.y += move.y * bestT * remaining;
 
-        SDL_FRect tileAtHit{
-            bestTileStart.x + bestTileMove.x * bestT * remaining,
-            bestTileStart.y + bestTileMove.y * bestT * remaining,
-            bestTileStart.w,
-            bestTileStart.h
-        };
+        SDL_FRect tileAtHit{bestTileStart.x + bestTileMove.x * bestT * remaining,
+                            bestTileStart.y + bestTileMove.y * bestT * remaining,
+                            bestTileStart.w,
+                            bestTileStart.h};
 
-        if (bestNX > 0.0f) hitLeft = true;
-        if (bestNX < 0.0f) hitRight = true;
-        if (bestNY > 0.0f) hitTop = true;
-        if (bestNY < 0.0f) hitBottom = true;
+        if (bestNX > 0.0f)
+            hitLeft = true;
+        if (bestNX < 0.0f)
+            hitRight = true;
+        if (bestNY > 0.0f)
+            hitTop = true;
+        if (bestNY < 0.0f)
+            hitBottom = true;
 
         if ((hitLeft && hitRight) || (hitTop && hitBottom)) {
             kill();
@@ -217,6 +204,12 @@ void Player::handle_movement(const World& world) {
             }
         }
 
+        // Check if touching a damageable tile.
+        if (bestTile->is_damageable() && damagableCooldown <= 0) {
+            take_damage();
+            damagableCooldown = 30;
+        }
+
         remaining *= (1.0f - bestT);
     }
 
@@ -225,12 +218,9 @@ void Player::handle_movement(const World& world) {
         for (const auto& tile : world.get_tiles()) {
             const SDL_FRect t = tile.get_body();
 
-            const bool overlapsX =
-                body.x + body.w > t.x &&
-                body.x < t.x + t.w;
+            const bool overlapsX = body.x + body.w > t.x && body.x < t.x + t.w;
 
-            const bool touchingTop =
-                std::abs((body.y + body.h) - t.y) < 0.1f;
+            const bool touchingTop = std::abs((body.y + body.h) - t.y) < 0.1f;
 
             if (overlapsX && touchingTop && v.y >= 0.0f) {
                 body.y = t.y - body.h;
@@ -239,6 +229,12 @@ void Player::handle_movement(const World& world) {
                 break;
             }
         }
+    }
+
+    // Check if standing on a damageable tile.
+    if (ground && ground.value()->is_damageable() && damagableCooldown <= 0) {
+        take_damage();
+        damagableCooldown = 30;
     }
 }
 
@@ -252,14 +248,8 @@ SDL_FPoint Player::get_texture_coordinates() const {
         };
     } else if (v.x != 0.0f) {
         const u32 cycle = (nFrames / 12) % 4;
-        const f32 x = (cycle == 1)
-            ? 8.0f
-            : (cycle == 3)
-                ? 16.0f
-                : 0.0f;
-        return {
-            x, 0.0f
-        };
+        const f32 x = (cycle == 1) ? 8.0f : (cycle == 3) ? 16.0f : 0.0f;
+        return {x, 0.0f};
     } else {
         return {0.0f, 0.0f};
     }
@@ -283,9 +273,7 @@ void Player::kill() { batteryRemaining = -1; }
 
 bool Player::is_out_of_battery() const { return batteryRemaining < 0; }
 
-void Player::take_damage() {
-    batteryRemaining -= (batteryCapacity / 10);
-}
+void Player::take_damage() { batteryRemaining -= (batteryCapacity / 10); }
 
 bool Player::take_coins(i32 cost) {
     if (numCoins >= cost) {
@@ -302,13 +290,13 @@ void Player::increase_battery_capacity() { batteryCapacity += batteryCapacityInc
 
 void Player::increase_battery_capacity_upgrade() {
     batteryCapacityIncrease *= 1.5f;
-    batteryCapacityIncrease -= batteryCapacityIncrease % 10;  // Round to nearest 10 for cleaner numbers.
+    batteryCapacityIncrease -= batteryCapacityIncrease % 10; // Round to nearest 10 for cleaner numbers.
 }
 
 void Player::increase_battery_efficiency() { batteryCost -= 1; }
 
 void Player::increase_speed() {
-    xSpeedMulti += 0.25f; 
+    xSpeedMulti += 0.25f;
     xSpeed = BASE_X_SPEED * sqrt(xSpeedMulti);
     dashSpeed = xSpeed * dashSpeedMulti;
 }
@@ -346,9 +334,7 @@ void Player::update(World& world) {
 
     batteryRemaining -= batteryCost;
     dashCooldown--;
-    if (damagableCooldown > 0) {
-        damagableCooldown--;
-    }
+    damagableCooldown--;
 
     // Reset coyote time when on ground.
     if (is_on_ground()) {
@@ -365,17 +351,20 @@ void Player::draw() const {
     // Draw the player body.
     const auto srcPos = get_texture_coordinates();
     const SDL_FRect src{
-        srcPos.x, srcPos.y,
-        8.0f, 8.0f,
+        srcPos.x,
+        srcPos.y,
+        8.0f,
+        8.0f,
     };
     const SDL_FRect bodyDst{
-        (f32(gWindow.get_width()) - body.w) / 2.0f, 
-        (f32(gWindow.get_height()) - body.h) / 2.0f, 
-        body.w, 
-        body.h
-    };
-    SDL_RenderTextureRotated(renderer, gAssets.player.get(), &src, &bodyDst, 0.0, nullptr, 
-    isFacingLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
+        (f32(gWindow.get_width()) - body.w) / 2.0f, (f32(gWindow.get_height()) - body.h) / 2.0f, body.w, body.h};
+    SDL_RenderTextureRotated(renderer,
+                             gAssets.player.get(),
+                             &src,
+                             &bodyDst,
+                             0.0,
+                             nullptr,
+                             isFacingLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
 
     // Draw the battery meter.
     const f32 percentBattery = f32(batteryRemaining) / f32(batteryCapacity);

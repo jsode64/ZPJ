@@ -14,15 +14,13 @@ MainMenu::MainMenu(Game& game) : game{game}, click(KEY_DOWN_MOUSE(SDL_BUTTON_LMA
     const Button START_BUTTON{
         {startX, startY, BUTTON_W, BUTTON_H}, "START", [](Player&, Game& g, Shop&) { g.start_level(); }};
 
-    const Button SETTINGS_BUTTON{
-        {startX, startY + BUTTON_H + BUTTON_SPACING, BUTTON_W, BUTTON_H},
-        "SETTINGS",
-        [](Player&, Game& g, Shop&) { g.open_settings(); }};
+    const Button SETTINGS_BUTTON{{startX, startY + BUTTON_H + BUTTON_SPACING, BUTTON_W, BUTTON_H},
+                                 "SETTINGS",
+                                 [](Player&, Game& g, Shop&) { g.open_settings(); }};
 
-    const Button TUTORIAL_BUTTON{
-        {startX, startY + (BUTTON_H + BUTTON_SPACING) * 2.0f, BUTTON_W, BUTTON_H},
-        "TUTORIAL",
-        [](Player&, Game& g, Shop&) { g.open_tutorial(); }};
+    const Button TUTORIAL_BUTTON{{startX, startY + (BUTTON_H + BUTTON_SPACING) * 2.0f, BUTTON_W, BUTTON_H},
+                                 "TUTORIAL",
+                                 [](Player&, Game& g, Shop&) { g.open_tutorial(); }};
 
     buttons = {START_BUTTON, SETTINGS_BUTTON, TUTORIAL_BUTTON};
 }
@@ -32,7 +30,6 @@ void MainMenu::update(f32 mouseX, f32 mouseY, [[maybe_unused]] bool mouse_clicke
     if (!click.was_just_pressed()) {
         return;
     }
-
 
     for (const auto& button : buttons) {
         if (is_point_in_rect({mouseX, mouseY}, button.body)) {
@@ -50,7 +47,7 @@ void MainMenu::draw() const {
     SDL_FRect bg{0, 0, f32(gWindow.get_width()), f32(gWindow.get_height())};
     SDL_RenderFillRect(renderer, &bg);
 
-    // Draw title 
+    // Draw title
     if (gAssets.font) {
         SDL_Surface* title_surface = TTF_RenderText_Solid(gAssets.font, "0% Juice", 8, SDL_Color{255, 255, 100, 255});
         if (title_surface) {

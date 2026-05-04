@@ -9,8 +9,8 @@
 #include "shop.h"
 #include "texture.h"
 #include "tutorial_menu.h"
-#include "window.h"
 #include "win_menu.h"
+#include "window.h"
 #include "world.h"
 
 class Game {

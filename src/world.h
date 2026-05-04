@@ -14,7 +14,7 @@
 class Player;
 
 class World {
-private:
+  private:
     /** The maximum number of objects that can be in a world. */
     static constexpr usize MAX_NUM_OBJS = 1024;
 
@@ -63,7 +63,7 @@ private:
         numCoins++;
     }
 
-public:
+  public:
     /** The exit door. */
     static constexpr SDL_FRect DOOR{0, 0, 45, 80};
 

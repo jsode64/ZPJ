@@ -3,16 +3,8 @@
 #include "assets.h"
 
 Game::Game()
-    : player(),
-      world(),
-      shop{*this, player},
-      main_menu{*this},
-      settings_menu{*this},
-      tutorial_menu{*this},
-      win_menu{*this},
-      pause_menu{*this},
-      state{State::MainMenu},
-      previous_state{State::MainMenu},
+    : player(), world(), shop{*this, player}, main_menu{*this}, settings_menu{*this}, tutorial_menu{*this},
+      win_menu{*this}, pause_menu{*this}, state{State::MainMenu}, previous_state{State::MainMenu},
       pause_key{KEY_DOWN_SCANCODE(SDL_SCANCODE_ESCAPE)} {}
 
 void Game::start_level() {

@@ -23,7 +23,8 @@ SDL_FRect SettingsMenu::get_slider_handle() const {
 }
 
 SettingsMenu::SettingsMenu(Game& game)
-    : game{game}, click(KEY_DOWN_MOUSE(SDL_BUTTON_LMASK)), volume{1.0f}, dragging{false}, currentRebind{RebindMode::None} {
+    : game{game}, click(KEY_DOWN_MOUSE(SDL_BUTTON_LMASK)), volume{1.0f}, dragging{false},
+      currentRebind{RebindMode::None} {
     const f32 centerX = f32(gWindow.get_width()) / 2.0f;
     const f32 centerY = f32(gWindow.get_height()) / 2.0f;
 
@@ -34,24 +35,22 @@ SettingsMenu::SettingsMenu(Game& game)
                                  currentRebind = RebindMode::Left;
                              }};
 
-    const Button REBIND_RIGHT{
-        {startX, startY + BACK_BUTTON_H + 10.0f, BACK_BUTTON_W, BACK_BUTTON_H}, "RIGHT: ", [this](Player&, Game&, Shop&) {
-            currentRebind = RebindMode::Right;
-        }};
+    const Button REBIND_RIGHT{{startX, startY + BACK_BUTTON_H + 10.0f, BACK_BUTTON_W, BACK_BUTTON_H},
+                              "RIGHT: ",
+                              [this](Player&, Game&, Shop&) { currentRebind = RebindMode::Right; }};
 
-    const Button REBIND_JUMP{
-        {startX + BACK_BUTTON_W + 10.0f, startY, BACK_BUTTON_W, BACK_BUTTON_H}, "JUMP: ", [this](Player&, Game&, Shop&) {
-            currentRebind = RebindMode::Jump;
-        }};
+    const Button REBIND_JUMP{{startX + BACK_BUTTON_W + 10.0f, startY, BACK_BUTTON_W, BACK_BUTTON_H},
+                             "JUMP: ",
+                             [this](Player&, Game&, Shop&) { currentRebind = RebindMode::Jump; }};
 
-    const Button REBIND_DASH{{startX + BACK_BUTTON_W + 10.0f, startY + BACK_BUTTON_H + 10.0f, BACK_BUTTON_W, BACK_BUTTON_H},
-                             "DASH: ",
-                             [this](Player&, Game&, Shop&) { currentRebind = RebindMode::Dash; }};
+    const Button REBIND_DASH{
+        {startX + BACK_BUTTON_W + 10.0f, startY + BACK_BUTTON_H + 10.0f, BACK_BUTTON_W, BACK_BUTTON_H},
+        "DASH: ",
+        [this](Player&, Game&, Shop&) { currentRebind = RebindMode::Dash; }};
 
-    const Button BACK_BUTTON{
-        {centerX - BACK_BUTTON_W / 2.0f, centerY + 130.0f, BACK_BUTTON_W, BACK_BUTTON_H},
-        "BACK",
-        [](Player&, Game& g, Shop&) { g.close_settings(); }};
+    const Button BACK_BUTTON{{centerX - BACK_BUTTON_W / 2.0f, centerY + 130.0f, BACK_BUTTON_W, BACK_BUTTON_H},
+                             "BACK",
+                             [](Player&, Game& g, Shop&) { g.close_settings(); }};
 
     buttons = {REBIND_LEFT, REBIND_RIGHT, REBIND_JUMP, REBIND_DASH, BACK_BUTTON};
 }
@@ -69,10 +68,14 @@ void SettingsMenu::update(f32 mouseX, f32 mouseY, [[maybe_unused]] bool mouse_cl
         for (int i = 0; i < SDL_SCANCODE_COUNT; ++i) {
             if (keys[i]) {
                 SDL_Scancode sc = static_cast<SDL_Scancode>(i);
-                if (currentRebind == RebindMode::Left) player.set_left_key(sc);
-                else if (currentRebind == RebindMode::Right) player.set_right_key(sc);
-                else if (currentRebind == RebindMode::Jump) player.set_jump_key(sc);
-                else if (currentRebind == RebindMode::Dash) player.set_dash_key(sc);
+                if (currentRebind == RebindMode::Left)
+                    player.set_left_key(sc);
+                else if (currentRebind == RebindMode::Right)
+                    player.set_right_key(sc);
+                else if (currentRebind == RebindMode::Jump)
+                    player.set_jump_key(sc);
+                else if (currentRebind == RebindMode::Dash)
+                    player.set_dash_key(sc);
                 currentRebind = RebindMode::None;
                 break;
             }
@@ -103,8 +106,10 @@ void SettingsMenu::update(f32 mouseX, f32 mouseY, [[maybe_unused]] bool mouse_cl
     if (dragging) {
         const SDL_FRect track = get_slider_track();
         const f32 relX = mouseX - track.x - (HANDLE_W / 2.0f);
-        volume = std::clamp(relX / (track.w - HANDLE_W), 0.0f, 1.0f);
-        gMixer.set_volume(volume);
+        if (track.w > HANDLE_W) { // Prevent division by zero
+            volume = std::clamp(relX / (track.w - HANDLE_W), 0.0f, 1.0f);
+            gMixer.set_volume(volume);
+        }
     }
 
     // Handle button clicks (Back).
@@ -126,10 +131,8 @@ void SettingsMenu::draw() const {
     SDL_FRect bg{0, 0, f32(gWindow.get_width()), f32(gWindow.get_height())};
     SDL_RenderFillRect(renderer, &bg);
 
-
     if (gAssets.font) {
-        SDL_Surface* title_surface =
-            TTF_RenderText_Solid(gAssets.font, "SETTINGS", 8, SDL_Color{255, 255, 100, 255});
+        SDL_Surface* title_surface = TTF_RenderText_Solid(gAssets.font, "SETTINGS", 8, SDL_Color{255, 255, 100, 255});
         if (title_surface) {
             SDL_Texture* title_texture = SDL_CreateTextureFromSurface(renderer, title_surface);
             if (title_texture) {
@@ -143,7 +146,6 @@ void SettingsMenu::draw() const {
             SDL_DestroySurface(title_surface);
         }
     }
-
 
     if (gAssets.font) {
         const i32 volumePercent = i32(volume * 100.0f + 0.5f);

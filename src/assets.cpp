@@ -1,8 +1,8 @@
 #include "assets.h"
 
+#include "config.hpp"
 #include <exception>
 #include <format>
-#include "config.hpp"
 
 Assets gAssets;
 

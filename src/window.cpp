@@ -39,9 +39,7 @@ SDL_Texture* Window::create_texture(const char* path) {
     return texture;
 }
 
-u32 Window::get_frames() const {
-    return nFrames;
-}
+u32 Window::get_frames() const { return nFrames; }
 
 bool Window::should_close() const { return shouldClose; }
 

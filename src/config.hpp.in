@@ -5,6 +5,4 @@
 #define ZPJ_GLOBAL_DIR "@CMAKE_INSTALL_FULL_DATADIR@/ZPJ"
 
 /** Returns the path in the global directory. */
-std::string make_path(const std::string& path) {
-    return std::format("{}/{}", ZPJ_GLOBAL_DIR, path);
-}
+std::string make_path(const std::string& path) { return std::format("{}/{}", ZPJ_GLOBAL_DIR, path); }

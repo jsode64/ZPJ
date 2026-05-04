@@ -10,10 +10,9 @@ WinMenu::WinMenu(Game& game) : game{game}, click(KEY_DOWN_MOUSE(SDL_BUTTON_LMASK
     const f32 centerX = f32(gWindow.get_width()) / 2.0f;
     const f32 centerY = f32(gWindow.get_height()) / 2.0f;
 
-    const Button MAIN_MENU_BUTTON{
-        {centerX - BUTTON_W / 2.0f, centerY + 50.0f, BUTTON_W, BUTTON_H},
-        "MAIN MENU",
-        [](Player&, Game& g, Shop&) { g.open_main_menu(); }};
+    const Button MAIN_MENU_BUTTON{{centerX - BUTTON_W / 2.0f, centerY + 50.0f, BUTTON_W, BUTTON_H},
+                                  "MAIN MENU",
+                                  [](Player&, Game& g, Shop&) { g.open_main_menu(); }};
 
     buttons = {MAIN_MENU_BUTTON};
 }
@@ -45,8 +44,7 @@ void WinMenu::draw() const {
 
     // Draw title
     if (gAssets.font) {
-        SDL_Surface* title_surface =
-            TTF_RenderText_Solid(gAssets.font, "YOU WIN!", 8, SDL_Color{100, 255, 100, 255});
+        SDL_Surface* title_surface = TTF_RenderText_Solid(gAssets.font, "YOU WIN!", 8, SDL_Color{100, 255, 100, 255});
         if (title_surface) {
             SDL_Texture* title_texture = SDL_CreateTextureFromSurface(renderer, title_surface);
             if (title_texture) {

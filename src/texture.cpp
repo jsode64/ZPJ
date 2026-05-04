@@ -1,8 +1,8 @@
 #include "texture.h"
 
+#include <SDL3_image/SDL_image.h>
 #include <exception>
 #include <format>
-#include <SDL3_image/SDL_image.h>
 
 #include "window.h"
 

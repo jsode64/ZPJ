@@ -13,24 +13,25 @@ Shop::Shop(Game& game, Player& player) : game{game}, player{player}, click(KEY_D
     const f32 W = (BUTTON_W * 2) + (BUTTON_SPACING * 3);
     const f32 X = (gWindow.get_width() - W) / 2;
     const f32 Y = 150;
-    const Button INCREASE_CAPACITY_BUTTON {
-        {X, Y, BUTTON_W, BUTTON_H}, "BATTERY++", [](Player& p, Game&, Shop& s) {
-            if (s.batteryCapacityNum < 20) {  // Max of 20 upgrades
-                if (p.take_coins(s.batteryCapacityCost)) {
-                    p.increase_battery_capacity();
-                    s.batteryCapacityNum += 1;
-                    if (s.batteryCapacityNum % 2 == 0) {
-                        s.batteryCapacityCost += 1;
-                        p.increase_battery_capacity_upgrade();
-                    }
-                }
-            }
-        }};
-    const Button EXIT_SHOP_BUTTON {
-        {gWindow.get_width() - (BUTTON_W + (BUTTON_SPACING / 2)), (BUTTON_SPACING / 2), BUTTON_W, BUTTON_H}, "EXIT SHOP", [](Player&, Game& g, Shop&) { g.start_level(); }};
-    const Button INCREASE_JUMP_BUTTON {
+    const Button INCREASE_CAPACITY_BUTTON{{X, Y, BUTTON_W, BUTTON_H}, "BATTERY++", [](Player& p, Game&, Shop& s) {
+                                              if (s.batteryCapacityNum < 20) { // Max of 20 upgrades
+                                                  if (p.take_coins(s.batteryCapacityCost)) {
+                                                      p.increase_battery_capacity();
+                                                      s.batteryCapacityNum += 1;
+                                                      if (s.batteryCapacityNum % 2 == 0) {
+                                                          s.batteryCapacityCost += 1;
+                                                          p.increase_battery_capacity_upgrade();
+                                                      }
+                                                  }
+                                              }
+                                          }};
+    const Button EXIT_SHOP_BUTTON{
+        {gWindow.get_width() - (BUTTON_W + (BUTTON_SPACING / 2)), (BUTTON_SPACING / 2), BUTTON_W, BUTTON_H},
+        "EXIT SHOP",
+        [](Player&, Game& g, Shop&) { g.start_level(); }};
+    const Button INCREASE_JUMP_BUTTON{
         {X, Y + (BUTTON_H + BUTTON_SPACING), BUTTON_W, BUTTON_H}, "JUMP++", [](Player& p, Game&, Shop& s) {
-            if (s.jumpUpgradeNum < 10) {  // Max of 10 upgrades
+            if (s.jumpUpgradeNum < 10) { // Max of 10 upgrades
                 if (p.take_coins(s.jumpUpgradeCost)) {
                     p.increase_jump();
                     s.jumpUpgradeNum += 1;
@@ -40,9 +41,11 @@ Shop::Shop(Game& game, Player& player) : game{game}, player{player}, click(KEY_D
                 }
             }
         }};
-    const Button INCREASE_SPEED_BUTTON {
-        {X + (BUTTON_W + BUTTON_SPACING), Y + (BUTTON_H + BUTTON_SPACING), BUTTON_W, BUTTON_H}, "SPEED++", [](Player& p, Game&, Shop& s) {
-            if (s.speedUpgradeNum < 10) {  // Max of 10 upgrades
+    const Button INCREASE_SPEED_BUTTON{
+        {X + (BUTTON_W + BUTTON_SPACING), Y + (BUTTON_H + BUTTON_SPACING), BUTTON_W, BUTTON_H},
+        "SPEED++",
+        [](Player& p, Game&, Shop& s) {
+            if (s.speedUpgradeNum < 10) { // Max of 10 upgrades
                 if (p.take_coins(s.speedUpgradeCost)) {
                     p.increase_speed();
                     s.speedUpgradeNum += 1;
@@ -52,20 +55,23 @@ Shop::Shop(Game& game, Player& player) : game{game}, player{player}, click(KEY_D
                 }
             }
         }};
-    const Button INCREASE_BATTERY_EFFICIENCY_BUTTON {
-        {X, Y + 2 * (BUTTON_H + BUTTON_SPACING), BUTTON_W, BUTTON_H}, "BATTERY EFFICIENCY++", [](Player& p, Game&, Shop& s) {
-            if (s.batteryEfficiencyNum < 5) {  // Max of 5 upgrades
-                if (p.take_coins(s.batteryEfficiencyCost)) {
-                    p.increase_battery_efficiency();
-                    s.batteryEfficiencyNum += 1;
-                    s.batteryEfficiencyCost *= 2;
-                }
-            }
-        }};
-        const Button INCREASE_DASH_SPEED_BUTTON {
-        {X + (BUTTON_W + BUTTON_SPACING), Y + 2 * (BUTTON_H + BUTTON_SPACING), BUTTON_W, BUTTON_H}, "DASH SPEED++", [](Player& p, Game&, Shop& s) {
+    const Button INCREASE_BATTERY_EFFICIENCY_BUTTON{{X, Y + 2 * (BUTTON_H + BUTTON_SPACING), BUTTON_W, BUTTON_H},
+                                                    "BATTERY EFFICIENCY++",
+                                                    [](Player& p, Game&, Shop& s) {
+                                                        if (s.batteryEfficiencyNum < 5) { // Max of 5 upgrades
+                                                            if (p.take_coins(s.batteryEfficiencyCost)) {
+                                                                p.increase_battery_efficiency();
+                                                                s.batteryEfficiencyNum += 1;
+                                                                s.batteryEfficiencyCost *= 2;
+                                                            }
+                                                        }
+                                                    }};
+    const Button INCREASE_DASH_SPEED_BUTTON{
+        {X + (BUTTON_W + BUTTON_SPACING), Y + 2 * (BUTTON_H + BUTTON_SPACING), BUTTON_W, BUTTON_H},
+        "DASH SPEED++",
+        [](Player& p, Game&, Shop& s) {
             if (p.has_dash_unlocked()) {
-                if (s.dashSpeedUpgradeNum < 4) {  // Max of 4 upgrades
+                if (s.dashSpeedUpgradeNum < 4) { // Max of 4 upgrades
                     if (p.take_coins(s.dashSpeedUpgradeCost)) {
                         p.increase_dash_speed();
                         s.dashSpeedUpgradeNum += 1;
@@ -116,7 +122,7 @@ void Shop::draw() const {
         if (title_surface) {
             SDL_Texture* title_texture = SDL_CreateTextureFromSurface(renderer, title_surface);
             if (title_texture) {
-                SDL_FRect title_rect {
+                SDL_FRect title_rect{
                     f32(gWindow.get_width() - title_surface->w) / 2,
                     20,
                     f32(title_surface->w) * 1.5f,
@@ -132,7 +138,7 @@ void Shop::draw() const {
     // Draw player stats.
     const std::string stats =
         "Coins: " + std::to_string(player.get_coins()) + " | Battery: " + std::to_string(player.get_battery_capacity());
-    const SDL_FRect dst {
+    const SDL_FRect dst{
         gWindow.get_width() / 4.0f,
         75.0f,
         static_cast<f32>(gWindow.get_width()) / 2.0f,

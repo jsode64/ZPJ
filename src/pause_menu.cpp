@@ -15,15 +15,13 @@ PauseMenu::PauseMenu(Game& game) : game{game}, click(KEY_DOWN_MOUSE(SDL_BUTTON_L
     const Button RESUME_BUTTON{
         {startX, startY, BUTTON_W, BUTTON_H}, "RESUME", [](Player&, Game& g, Shop&) { g.resume(); }};
 
-    const Button SETTINGS_BUTTON{
-        {startX, startY + BUTTON_H + BUTTON_SPACING, BUTTON_W, BUTTON_H},
-        "SETTINGS",
-        [](Player&, Game& g, Shop&) { g.open_settings(); }};
+    const Button SETTINGS_BUTTON{{startX, startY + BUTTON_H + BUTTON_SPACING, BUTTON_W, BUTTON_H},
+                                 "SETTINGS",
+                                 [](Player&, Game& g, Shop&) { g.open_settings(); }};
 
-    const Button EXIT_BUTTON{
-        {startX, startY + (BUTTON_H + BUTTON_SPACING) * 2, BUTTON_W, BUTTON_H},
-        "EXIT",
-        [](Player&, Game& g, Shop&) { g.open_main_menu(); }};
+    const Button EXIT_BUTTON{{startX, startY + (BUTTON_H + BUTTON_SPACING) * 2, BUTTON_W, BUTTON_H},
+                             "EXIT",
+                             [](Player&, Game& g, Shop&) { g.open_main_menu(); }};
 
     buttons = {RESUME_BUTTON, SETTINGS_BUTTON, EXIT_BUTTON};
 }

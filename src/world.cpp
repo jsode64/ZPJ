@@ -1,8 +1,8 @@
 #include "world.h"
-#include <random>
 #include "assets.h"
 #include "player.h"
 #include "util.h"
+#include <random>
 
 World::World() : tiles{{}}, numTiles{0}, coins{}, numCoins{0}, fruits{}, dashUpgrade{}, doubleJumpUpgrade{} {}
 
@@ -11,7 +11,7 @@ World::~World() {}
 std::span<const Tile> World::get_tiles() const { return std::span(tiles.data(), numTiles); }
 
 bool World::are_fruits_collected() const {
-    for (const auto& fruit: fruits) {
+    for (const auto& fruit : fruits) {
         if (fruit.is_active()) {
             return false;
         }
@@ -151,11 +151,11 @@ void World::init(const Player& player) {
 
     // Place fruit.
     fruits = {
-        Fruit(350.0f, -50.0f, fruits[0].is_active()),
-        Fruit(390.0f, -50.0f, fruits[1].is_active()),
-        Fruit(430.0f, -50.0f, fruits[2].is_active()),
-        Fruit(470.0f, -50.0f, fruits[3].is_active()),
-        Fruit(510.0f, -50.0f, fruits[4].is_active()),
+        Fruit(-1900.0f, -300.0f, fruits[0].is_active()), // Apple: Bottom left next to double jump upgrade
+        Fruit(-50.0f, -875.0f, fruits[1].is_active()),   // Banana: On the higher floating platform
+        Fruit(225.0f, -475.0f, fruits[2].is_active()),   // Grape: Center floating platform
+        Fruit(1850.0f, -100.0f, fruits[3].is_active()),  // Watermelon: Lifted up from the ground
+        Fruit(1800.0f, -1350.0f, fruits[4].is_active()), // Orange: At the top of the rising platform area
     };
 
     // Place upgrades.
@@ -186,7 +186,7 @@ void World::update(Player& player) {
     }
 
     // Check for collected fruit.
-    for (auto& fruit: fruits) {
+    for (auto& fruit : fruits) {
         const SDL_FRect fruitBody{
             fruit.get_x(),
             fruit.get_y(),
@@ -246,13 +246,13 @@ void World::draw(const Player& player) const {
 
         if (tile.is_damageable()) {
             // Draw damageable tiles as solid red rectangles
-            SDL_SetRenderDrawColor(renderer, 255, 50, 50, 255);  // Dark red color
+            SDL_SetRenderDrawColor(renderer, 255, 50, 50, 255); // Dark red color
             SDL_RenderFillRect(renderer, &dst);
         } else {
             // Draw normal tiles with grass texture
             const SDL_FRect src{
-                0, 
-                0, 
+                0,
+                0,
                 tileBody.w / 4.0f,
                 tileBody.h / 4.0f,
             };

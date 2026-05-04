@@ -10,7 +10,7 @@
 class World;
 
 class Player {
-private:
+  private:
     /** Player width. */
     static constexpr f32 W = 32.0f;
 
@@ -122,11 +122,10 @@ private:
     /** Handles user input for movement. */
     void handle_input();
 
-
     /** Handles movement and collision. */
     void handle_movement(const World& world);
 
-public:
+  public:
     Player();
 
     ~Player();
