@@ -14,7 +14,7 @@ Player::Player()
       xSpeedMulti{1.0f}, xSpeed{BASE_X_SPEED * xSpeedMulti}, jumpSpeedMulti{0.0f},
       jumpSpeed{BASE_JUMP_SPEED * jumpSpeedMulti}, dashSpeedMulti{2.0f}, dashSpeed{xSpeed * dashSpeedMulti},
       batteryCapacity{1'000}, batteryCapacityIncrease{100}, batteryCost{BASE_BATTERY_COST}, batteryRemaining{1'000},
-      dashCooldown{0}, numCoins{1000}, coyoteTime{0}, hasDoubleJump{false}, isDoubleJumpUnlocked{true},
+      dashCooldown{0}, numCoins{0}, coyoteTime{0}, hasDoubleJump{false}, isDoubleJumpUnlocked{true},
       isDashUnlocked{false} {
     init();
 }
