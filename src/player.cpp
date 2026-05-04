@@ -9,12 +9,27 @@
 #include "world.h"
 
 Player::Player()
-    : jumpKeyState(KEY_DOWN_SCANCODE(JUMP_KEY)), dashKeyState(KEY_DOWN_SCANCODE(DASH_KEY)), body{}, v{}, ground{},
-      xSpeedMulti{1.0f}, xSpeed{BASE_X_SPEED * xSpeedMulti}, jumpSpeedMulti{3.0f}, jumpSpeed{BASE_JUMP_SPEED * jumpSpeedMulti},
-      dashSpeedMulti{2.0f}, dashSpeed{xSpeed * dashSpeedMulti},
-      batteryCapacity{1'000}, batteryCapacityIncrease{100}, batteryCost{BASE_BATTERY_COST}, batteryRemaining{1'000},
-      dashCooldown{0}, numCoins{0}, coyoteTime{0}, hasDoubleJump{false}, isDoubleJumpUnlocked{false},
-      isDashUnlocked{false}, damagableCooldown{0}, isFacingLeft{false} {
+    : jumpKeyState{[this]() { return SDL_GetKeyboardState(nullptr)[jumpKey]; }},
+      dashKeyState{[this]() { return SDL_GetKeyboardState(nullptr)[dashKey]; }},
+      body{},
+      v{},
+      ground{},
+      xSpeedMulti{1.0f},
+      xSpeed{BASE_X_SPEED * xSpeedMulti},
+      jumpSpeedMulti{0.0f},
+      jumpSpeed{BASE_JUMP_SPEED * jumpSpeedMulti},
+      dashSpeedMulti{2.0f},
+      dashSpeed{xSpeed * dashSpeedMulti},
+      batteryCapacity{1'000},
+      batteryCapacityIncrease{100},
+      batteryCost{BASE_BATTERY_COST},
+      batteryRemaining{1'000},
+      dashCooldown{0},
+      numCoins{1000},
+      coyoteTime{0},
+      hasDoubleJump{false},
+      isDoubleJumpUnlocked{false},
+      isDashUnlocked{false} {
     init();
 }
 
@@ -28,10 +43,10 @@ void Player::handle_input() {
     // Horizontal movement.
     const bool isDashing = dashKeyState.was_just_pressed() && isDashUnlocked && (dashCooldown < 0);
     const f32 speed = isDashing ? dashSpeed : xSpeed;
-    if (keys[LEFT_KEY]) {
+    if (keys[leftKey]) {
         v.x = -speed;
         isFacingLeft = true;
-    } else if (keys[RIGHT_KEY]) {
+    } else if (keys[rightKey]) {
         v.x = speed;
         isFacingLeft = false;
     } else {
@@ -45,17 +60,11 @@ void Player::handle_input() {
         hasDoubleJump = is_on_ground() || coyoteTime > 0;
         coyoteTime = 0;
     }
-
-    // Apply gravity if not standing on a tile.
-    if (!ground) {
-        v.y += 1.0f;
-    }
+    v.y += GRAVITY;
 }
 
-void Player::handle_completion(const World& world) {
-    if (world.are_fruits_collected() && do_rects_collide(body, World::DOOR)) {
-        std::terminate();
-    }
+bool Player::has_completed_level(const World& world) const {
+    return world.are_fruits_collected() && do_rects_collide(body, World::DOOR);
 }
 
 void Player::handle_movement(const World& world) {
@@ -333,7 +342,6 @@ void Player::init() {
 
 void Player::update(World& world) {
     handle_input();
-    handle_completion(world);
     handle_movement(world);
 
     batteryRemaining -= batteryCost;

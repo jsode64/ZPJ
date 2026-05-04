@@ -6,7 +6,7 @@
 using KeyDownFn = std::function<bool(void)>;
 
 #define KEY_DOWN_SCANCODE(scancode) []() { return SDL_GetKeyboardState(nullptr)[(scancode)]; }
-#define KEY_DOWN_MOUSE(mb) []() { return (SDL_GetGlobalMouseState(nullptr, nullptr) & (mb)) != 0; }
+#define KEY_DOWN_MOUSE(mb) []() { return (SDL_GetMouseState(nullptr, nullptr) & (mb)) != 0; }
 
 class Key {
   private:

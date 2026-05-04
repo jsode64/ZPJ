@@ -25,3 +25,5 @@ void Mixer::init() {
         throw std::runtime_error(e);
     }
 }
+
+void Mixer::set_volume(f32 volume) { MIX_SetMixerGain(mixer, volume); }
